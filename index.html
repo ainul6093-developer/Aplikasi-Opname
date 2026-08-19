@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Opname Toko</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <div class="header">
+
+        <div class="container">
+
+            <h1>📦 Opname Toko</h1>
+
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+
+        <!-- Tombol Scan -->
+
+        <!-- IMPORT FILE EXCEL -->
+<div class="card">
+
+    <input
+        type="file"
+        id="excelFile"
+        accept=".xls,.xlsx">
+
+    <p id="statusImport" style="
+    margin-top:10px;
+    font-size:16px;
+    font-weight:bold;
+    color:#28a745;
+    ">
+
+        📂 Belum ada file dipilih
+
+    </p>
+
+</div>
+
+</div>
+
+        <!-- TOMBOL SCAN BARCODE -->
+
+    <button
+        class="scan-button"
+        id="btnScan">
+
+        📷 SCAN BARCODE
+
+    </button>
+
+    <div
+    id="scannerArea"
+    style="
+    position:relative;
+    width:100%;
+    margin-top:15px;
+    display:none;">
+
+    <div
+        id="reader"
+        style="
+        width:100%;">
+    </div>
+
+<button
+    id="btnTorch"
+    title="Senter"
+    style="
+    display:block;
+    position:absolute;
+    top:10px;
+    right:10px;
+    z-index:999;
+    width:50px;
+    height:50px;
+    padding:0;
+    border:none;
+    border-radius:50%;
+    background:rgba(0,0,0,0.55);
+    color:white;
+    font-size:27px;
+    font-weight:bold;">
+
+    ⚡
+
+</button>
+
+</div>
+
+</div>
+
+
+        </div>
+
+
+        <!-- Informasi Produk -->
+
+        <div class="card">
+
+<div class="label">
+
+KODE
+
+</div>
+
+<div
+style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;">
+
+<div
+id="kodeProduk"
+style="
+font-size:18px;
+font-weight:bold;">
+
+-
+
+</div>
+
+<button
+id="copyKode"
+style="
+border:none;
+background:none;
+font-size:22px;">
+
+📋
+
+</button>
+
+</div>
+            <div class="label">
+                PRODUK
+            </div>
+
+            <div class="product-name" id="namaProduk">
+
+    Belum ada produk
+
+</div>
+
+
+            <div class="info-row">
+
+                <span>Rak</span>
+
+                <strong id="rakProduk">-</strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>Stok Sistem</span>
+
+                <span
+class="stock-system"
+id="stokProduk">
+
+-
+
+</span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Input Fisik -->
+
+        <div class="card">
+
+<div class="label">
+    STOK KULKAS
+
+    <span style="float:right;">
+
+        <button
+        id="aktifKulkas"
+        type="button"
+        style="
+        border:none;
+        background:#28a745;
+        color:white;
+        border-radius:5px;
+        font-size:18px;
+        width:35px;
+        height:35px;">
+
+        +
+
+        </button>
+
+        <button
+        id="nonaktifKulkas"
+        type="button"
+        style="
+        border:none;
+        background:#dc3545;
+        color:white;
+        border-radius:5px;
+        font-size:18px;
+        width:35px;
+        height:35px;">
+
+        -
+
+        </button>
+
+    </span>
+</div>
+
+<input
+id="stokKulkas"
+type="number"
+placeholder="Masukkan stok kulkas"
+disabled>
+
+
+<div class="label" style="margin-top:15px;">
+
+    STOK FISIK
+
+</div>
+
+<input
+id="stokFisik"
+type="number"
+placeholder="Masukkan jumlah fisik">
+
+
+<div class="label" style="margin-top:15px;">
+
+    TOTAL FISIK
+
+</div>
+
+<div
+id="totalFisik"
+style="
+font-size:28px;
+font-weight:bold;
+padding:10px 0;">
+
+0
+
+</div>
+            
+
+            <button
+id="btnSimpan"
+class="save-button">
+
+              ✓ SIMPAN OPNAME
+
+</button>
+<button
+id="btnHapusSemua"
+type="button"
+style="
+width:100%;
+margin-top:10px;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#dc3545;
+color:white;
+font-size:17px;
+font-weight:bold;">
+
+🗑 HAPUS SEMUA
+
+</button>
+
+<div
+id="dataTersimpan"
+style="margin-top:20px;">
+
+</div>
+        </div>
+        
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="js/app.js"></script>
+</body>
+
+</html>
