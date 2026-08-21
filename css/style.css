@@ -1,1 +1,104 @@
+* {
+    box-sizing: border-box;
+}
 
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f6f8;
+    color: #222;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    padding: 15px;
+}
+
+.header {
+    background: #1976d2;
+    color: white;
+    padding: 18px;
+    border-radius: 0 0 15px 15px;
+    margin-bottom: 15px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 18px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.scan-button {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 18px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #1976d2;
+    color: white;
+}
+
+.scan-button:active {
+    transform: scale(0.98);
+}
+
+.label {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.product-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.stock-system {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.save-button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #2e7d32;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+}
