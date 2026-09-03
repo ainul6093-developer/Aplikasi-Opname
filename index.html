@@ -16,16 +16,59 @@
 
 <body>
 
-    <div class="header">
+<div class="header">
 
-        <div class="container">
+    <div class="container">
 
-            <h1>📦 Opname Toko</h1>
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            width:100%;">
+
+            <h1 style="
+                margin:0;
+                font-size:24px;">
+                📦 Opname Toko
+            </h1>
+
+            <div style="
+                display:flex;
+                align-items:center;
+                gap:8px;">
+
+                <button
+                    id="btnReset"
+                    type="button"
+                    style="
+                    border:none;
+                    background:#dc3545;
+                    color:white;
+                    border-radius:8px;
+                    padding:8px 12px;
+                    font-size:14px;
+                    font-weight:bold;">
+                    ↻ RESET
+                </button>
+
+                <button
+                    id="btnMenu"
+                    type="button"
+                    style="
+                    border:none;
+                    background:transparent;
+                    font-size:26px;
+                    padding:4px;">
+                    ⋮
+                </button>
+
+            </div>
 
         </div>
 
     </div>
 
+</div>
 
     <div class="container">
 
@@ -189,52 +232,67 @@ id="stokProduk">
         <!-- Input Fisik -->
 
         <div class="card">
+          
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;">
 
-<div class="label">
-    STOK KULKAS
+    <div class="label" style="margin:0;">
+        STOK KULKAS
+    </div>
 
-    <span style="float:right;">
+    <label style="
+        position:relative;
+        display:inline-block;
+        width:52px;
+        height:30px;">
 
-        <button
-        id="aktifKulkas"
-        type="button"
-        style="
-        border:none;
-        background:#28a745;
-        color:white;
-        border-radius:5px;
-        font-size:18px;
-        width:35px;
-        height:35px;">
+        <input
+            type="checkbox"
+            id="toggleKulkas"
+            style="
+            opacity:0;
+            width:0;
+            height:0;">
 
-        +
+        <span style="
+            position:absolute;
+            cursor:pointer;
+            inset:0;
+            background:#bdbdbd;
+            border-radius:30px;
+            transition:0.3s;"
+            id="kulkasSwitch">
 
-        </button>
+            <span style="
+                position:absolute;
+                content:'';
+                height:24px;
+                width:24px;
+                left:3px;
+                top:3px;
+                background:white;
+                border-radius:50%;
+                transition:0.3s;"
+                id="kulkasKnob">
+            </span>
 
-        <button
-        id="nonaktifKulkas"
-        type="button"
-        style="
-        border:none;
-        background:#dc3545;
-        color:white;
-        border-radius:5px;
-        font-size:18px;
-        width:35px;
-        height:35px;">
+        </span>
 
-        -
+    </label>
 
-        </button>
-
-    </span>
 </div>
 
-<input
-id="stokKulkas"
-type="number"
-placeholder="Masukkan stok kulkas"
-disabled>
+<div id="stokKulkasArea" style="display:none;">
+
+    <input
+        id="stokKulkas"
+        type="number"
+        placeholder="Masukkan stok kulkas">
+
+</div>
 
 
 <div class="label" style="margin-top:15px;">
@@ -274,23 +332,7 @@ class="save-button">
               ✓ SIMPAN OPNAME
 
 </button>
-<button
-id="btnHapusSemua"
-type="button"
-style="
-width:100%;
-margin-top:10px;
-padding:14px;
-border:none;
-border-radius:10px;
-background:#dc3545;
-color:white;
-font-size:17px;
-font-weight:bold;">
 
-🗑 HAPUS SEMUA
-
-</button>
 
 <div
 id="dataTersimpan"
