@@ -14,14 +14,97 @@ let namaSekarang = "";
 
 let rakSekarang = "";
 
+let statusImportTersimpan = "📂 Belum ada file dipilih";
+
+
+// ================================
+// MEMUAT DATA TERAKHIR
+// ================================
+
+try {
+
+    const dataAplikasi =
+        JSON.parse(localStorage.getItem("opnameTokoData"));
+
+    if (dataAplikasi) {
+
+        dataProduk = dataAplikasi.dataProduk || [];
+
+        dataTersimpan = dataAplikasi.dataTersimpan || {};
+
+        barcodeSekarang =
+            dataAplikasi.barcodeSekarang || "";
+
+        kulkasAktif =
+            dataAplikasi.kulkasAktif || false;
+
+        stokSistemSekarang =
+            dataAplikasi.stokSistemSekarang || 0;
+
+        namaSekarang =
+            dataAplikasi.namaSekarang || "";
+
+        rakSekarang =
+            dataAplikasi.rakSekarang || "";
+
+        statusImportTersimpan =
+            dataAplikasi.statusImportTersimpan ||
+            "📂 Belum ada file dipilih";
+
+    }
+
+} catch (e) {
+
+    console.log("Data tersimpan tidak dapat dibaca.");
+
+}
+// ================================
+// SIMPAN KONDISI APLIKASI
+// ================================
+
+function simpanKondisiAplikasi() {
+
+    const kondisi = {
+
+        dataProduk: dataProduk,
+
+        dataTersimpan: dataTersimpan,
+
+        barcodeSekarang: barcodeSekarang,
+
+        kulkasAktif: kulkasAktif,
+
+        stokSistemSekarang: stokSistemSekarang,
+
+        namaSekarang: namaSekarang,
+
+        rakSekarang: rakSekarang,
+
+        statusImportTersimpan: statusImportTersimpan,
+
+        stokKulkas:
+            document.getElementById("stokKulkas").value,
+
+        stokFisik:
+            document.getElementById("stokFisik").value
+
+    };
+
+    localStorage.setItem(
+        "opnameTokoData",
+        JSON.stringify(kondisi)
+    );
+
+}
+
 input.addEventListener("change", function (e) {
 
     const file = e.target.files[0];
 
-if (!file) return;
+    if (!file) return;
 
-document.getElementById("statusImport").innerHTML =
-"📂 Memuat file : " + file.name;
+    document.getElementById("statusImport").innerHTML =
+        "📂 Memuat file : " + file.name;
 
     const reader = new FileReader();
 
@@ -39,17 +122,46 @@ document.getElementById("statusImport").innerHTML =
 
         dataProduk = XLSX.utils.sheet_to_json(worksheet);
 
-        // ===== POP UP =====
-        alert("Produk berhasil dimuat : " + dataProduk.length);
+      dataProduk = XLSX.utils.sheet_to_json(worksheet);
 
-        // ===== INDIKATOR PERMANEN =====
+
+// =================================
+// SIMPAN KETERANGAN FILE EXCEL
+// =================================
+
+statusImportTersimpan =
+    "📂 " + file.name +
+    "<br>✅ Produk berhasil dimuat : " +
+    dataProduk.length;
+
+
+// Tampilkan keterangan
 document.getElementById("statusImport").innerHTML =
-"📂 " + file.name +
-"<br>✅ Produk berhasil dimuat : " + dataProduk.length;
+    statusImportTersimpan;
 
-        // ===== CONSOLE =====
+
+// Simpan semua kondisi aplikasi
+simpanKondisiAplikasi();
+
+
+alert(
+    "Produk berhasil dimuat : " +
+    dataProduk.length
+);
+    
+        document.getElementById("statusImport").innerHTML =
+            "📂 " + file.name +
+            "<br>✅ Produk berhasil dimuat : " +
+            dataProduk.length;
+
         console.log(dataProduk);
-console.log(Object.keys(dataProduk[0]));
+
+        if (dataProduk.length > 0) {
+            console.log(
+                Object.keys(dataProduk[0])
+            );
+        }
+
     };
 
     reader.readAsArrayBuffer(file);
@@ -142,7 +254,6 @@ if(!hasil){
     stokSistemSekarang = 0;
     namaSekarang = "";
     rakSekarang = "";
-    kulkasAktif = false;
 
     document.getElementById("stokKulkas").disabled = true;
 
@@ -155,28 +266,22 @@ const dataLama = dataTersimpan[String(hasil.KODE).trim()];
 
 if (dataLama) {
 
-    kulkasAktif = dataLama.kulkasAktif;
-
     document.getElementById("stokKulkas").value =
         dataLama.kulkas;
 
     document.getElementById("stokFisik").value =
         dataLama.fisik;
 
-    document.getElementById("stokKulkas").disabled =
-        !kulkasAktif;
-
 } else {
-
-    kulkasAktif = false;
 
     document.getElementById("stokKulkas").value = "";
 
     document.getElementById("stokFisik").value = "";
 
-    document.getElementById("stokKulkas").disabled = true;
-
 }
+
+aturTampilanKulkas();
+          
 
 hitungTotalFisik();
 
@@ -187,6 +292,8 @@ stokSistemSekarang = Number(hasil.STOK);
 namaSekarang = hasil.NAMA;
 
 rakSekarang = hasil.RAK;
+
+simpanKondisiAplikasi();
 
 document.getElementById("kodeProduk").innerHTML =
     hasil.KODE;
@@ -256,6 +363,8 @@ document.getElementById("btnSimpan").addEventListener(
 
         const total = kulkas + fisik;
 
+      delete dataTersimpan[barcodeSekarang];
+
         dataTersimpan[barcodeSekarang] = {
 
             barcode: barcodeSekarang,
@@ -277,6 +386,8 @@ document.getElementById("btnSimpan").addEventListener(
         };
 
         tampilkanDataTersimpan();
+
+        simpanKondisiAplikasi();
 
         alert("✅ Data berhasil disimpan");
 
@@ -315,45 +426,79 @@ function hitungTotalFisik() {
 
 document.getElementById("stokKulkas").addEventListener(
     "input",
-    hitungTotalFisik
-);
+    function () {
 
+        hitungTotalFisik();
+
+        simpanKondisiAplikasi();
+
+    }
+);
 
 document.getElementById("stokFisik").addEventListener(
     "input",
-    hitungTotalFisik
-);
-
-document.getElementById("aktifKulkas").addEventListener(
-    "click",
     function () {
 
-        kulkasAktif = true;
+        hitungTotalFisik();
+
+        simpanKondisiAplikasi();
+
+    }
+);
+
+function aturTampilanKulkas() {
+
+    const area = document.getElementById("stokKulkasArea");
+    const switchBg = document.getElementById("kulkasSwitch");
+    const knob = document.getElementById("kulkasKnob");
+
+    if (kulkasAktif) {
+
+        area.style.display = "block";
+
+        switchBg.style.background = "#2196F3";
+
+        knob.style.left = "25px";
 
         document.getElementById("stokKulkas").disabled = false;
 
-        document.getElementById("stokKulkas").focus();
+    } else {
 
-        hitungTotalFisik();
+        area.style.display = "none";
 
-    }
-);
+        switchBg.style.background = "#bdbdbd";
 
-
-document.getElementById("nonaktifKulkas").addEventListener(
-    "click",
-    function () {
-
-        kulkasAktif = false;
+        knob.style.left = "3px";
 
         document.getElementById("stokKulkas").disabled = true;
 
-        document.getElementById("stokKulkas").value = "";
+    }
 
-        hitungTotalFisik();
+    hitungTotalFisik();
+}
+
+
+document.getElementById("toggleKulkas").addEventListener(
+    "change",
+    function () {
+
+        kulkasAktif = this.checked;
+
+      simpanKondisiAplikasi();
+
+        if (!kulkasAktif) {
+
+            document.getElementById("stokKulkas").value = "";
+
+        }
+
+        aturTampilanKulkas();
 
     }
 );
+
+
+aturTampilanKulkas();
 
 function tampilkanDataTersimpan() {
 
@@ -362,7 +507,7 @@ function tampilkanDataTersimpan() {
 
     container.innerHTML = "";
 
-    Object.values(dataTersimpan).forEach(function (data) {
+    Object.values(dataTersimpan).reverse().forEach(function (data) {
 
         const item = document.createElement("div");
 
@@ -424,29 +569,141 @@ color:${selisih === 0 ? "#333" : "#d32f2f"};">
     });
 }
 
-document.getElementById("btnHapusSemua").addEventListener(
+
+// ================================
+// KEMBALIKAN TAMPILAN TERAKHIR
+// ================================
+
+function pulihkanTampilanTerakhir() {
+
+    if (dataProduk.length > 0 && barcodeSekarang !== "") {
+
+        const hasil = dataProduk.find(function(item) {
+
+            return String(item.KODE).trim() ===
+                   String(barcodeSekarang).trim();
+
+        });
+
+        if (hasil) {
+
+            document.getElementById("namaProduk").innerHTML =
+                hasil.NAMA;
+
+            document.getElementById("rakProduk").innerHTML =
+                hasil.RAK;
+
+            document.getElementById("stokProduk").innerHTML =
+                hasil.STOK;
+
+            document.getElementById("kodeProduk").innerHTML =
+                hasil.KODE;
+
+        }
+
+    }
+
+    const dataAplikasi =
+        JSON.parse(
+            localStorage.getItem("opnameTokoData")
+        );
+
+    if (dataAplikasi) {
+
+        document.getElementById("statusImport").innerHTML =
+            dataAplikasi.statusImportTersimpan ||
+            "📂 Belum ada file dipilih";
+
+        document.getElementById("stokKulkas").value =
+            dataAplikasi.stokKulkas || "";
+
+        document.getElementById("stokFisik").value =
+            dataAplikasi.stokFisik || "";
+
+    }
+
+    const toggle =
+        document.getElementById("toggleKulkas");
+
+    if (toggle) {
+
+        toggle.checked = kulkasAktif;
+
+        aturTampilanKulkas();
+
+    }
+
+    hitungTotalFisik();
+
+    tampilkanDataTersimpan();
+
+}
+
+pulihkanTampilanTerakhir();
+
+
+
+// ================================
+// TOMBOL RESET TOTAL
+// ================================
+
+document.getElementById("btnReset").addEventListener(
     "click",
     function () {
 
-        if (Object.keys(dataTersimpan).length === 0) {
+        const yakin = confirm(
+            "Reset aplikasi?\n\n" +
+            "Semua data opname dan file Excel akan dihapus."
+        );
 
-            alert("Belum ada data.");
-
+        if (!yakin) {
             return;
-
         }
 
-        if (!confirm("Hapus semua data opname?")) {
+        localStorage.removeItem("opnameTokoData");
 
-            return;
-
-        }
-
+        dataProduk = [];
         dataTersimpan = {};
+
+        barcodeSekarang = "";
+        stokSistemSekarang = 0;
+        namaSekarang = "";
+        rakSekarang = "";
+        kulkasAktif = false;
+
+        document.getElementById("kodeProduk").innerHTML = "-";
+
+        document.getElementById("namaProduk").innerHTML =
+            "Belum ada produk";
+
+        document.getElementById("rakProduk").innerHTML = "-";
+
+        document.getElementById("stokProduk").innerHTML = "-";
+
+        document.getElementById("stokKulkas").value = "";
+
+        document.getElementById("stokFisik").value = "";
+
+        document.getElementById("totalFisik").innerText = "0";
+
+        const toggle =
+            document.getElementById("toggleKulkas");
+
+        if (toggle) {
+            toggle.checked = false;
+        }
 
         document.getElementById("dataTersimpan").innerHTML = "";
 
-        alert("✅ Semua data berhasil dihapus.");
+        statusImportTersimpan =
+            "📂 Belum ada file dipilih";
+      
+        document.getElementById("statusImport").innerHTML =
+            "📂 Belum ada file dipilih";
+
+        document.getElementById("excelFile").value = "";
+
+        alert("✅ Aplikasi berhasil direset.");
 
     }
 );
