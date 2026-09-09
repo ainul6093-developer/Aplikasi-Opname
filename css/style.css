@@ -102,3 +102,39 @@ input {
     font-size: 17px;
     font-weight: bold;
 }
+
+/* ================================
+   HASIL PENCARIAN PRODUK
+================================ */
+
+#hasilPencarianProduk {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.hasil-produk {
+    padding: 12px 5px;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.hasil-produk:active {
+    background: #f0f0f0;
+}
+
+.hasil-produk-kode {
+    font-weight: bold;
+}
+
+.hasil-produk-nama {
+    font-weight: normal;
+}
+
+.tidak-ditemukan {
+    padding: 10px 5px;
+    color: #777;
+    font-size: 14px;
+}
