@@ -4,6 +4,86 @@ let dataProduk = [];
 
 let barcodeSekarang = "";
 
+// ================================
+// PENCARIAN PRODUK
+// ================================
+
+const inputCariProduk =
+    document.getElementById("inputCariProduk");
+
+const hasilPencarianProduk =
+    document.getElementById("hasilPencarianProduk");
+
+inputCariProduk.addEventListener("input", function () {
+
+    const kata = this.value.trim().toLowerCase();
+
+    hasilPencarianProduk.innerHTML = "";
+
+    if (kata === "") {
+        return;
+    }
+
+    if (dataProduk.length === 0) {
+
+        hasilPencarianProduk.innerHTML =
+            '<div class="tidak-ditemukan">' +
+            'Import file Excel terlebih dahulu.' +
+            '</div>';
+
+        return;
+    }
+
+    const hasil = dataProduk.filter(function (item) {
+
+        const kode =
+            String(item.KODE || "").toLowerCase();
+
+        const nama =
+            String(item.NAMA || "").toLowerCase();
+
+        return kode.includes(kata) ||
+               nama.includes(kata);
+
+    });
+
+    if (hasil.length === 0) {
+
+        hasilPencarianProduk.innerHTML =
+            '<div class="tidak-ditemukan">' +
+            '❌ Produk tidak ditemukan' +
+            '</div>';
+
+        return;
+    }
+
+    hasil.forEach(function (item) {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "hasil-produk";
+
+        div.innerHTML =
+            '<span class="hasil-produk-kode">' +
+            item.KODE +
+            '</span> : ' +
+            '<span class="hasil-produk-nama">' +
+            item.NAMA +
+            '</span>';
+
+        div.addEventListener("click", function () {
+
+            pilihProdukDariPencarian(item);
+
+        });
+
+        hasilPencarianProduk.appendChild(div);
+
+    });
+
+});
+
 let dataTersimpan = {};
 
 let kulkasAktif = false;
@@ -173,6 +253,63 @@ const btnScan = document.querySelector(".scan-button");
 let scannerAktif = false;
 let html5QrCode;
 let torchNyala = false;
+
+// ================================
+// PILIH PRODUK DARI PENCARIAN
+// ================================
+
+function pilihProdukDariPencarian(hasil) {
+
+    const dataLama =
+        dataTersimpan[String(hasil.KODE).trim()];
+
+    if (dataLama) {
+
+        document.getElementById("stokKulkas").value =
+            dataLama.kulkas;
+
+        document.getElementById("stokFisik").value =
+            dataLama.fisik;
+
+    } else {
+
+        document.getElementById("stokKulkas").value = "";
+
+        document.getElementById("stokFisik").value = "";
+
+    }
+
+    aturTampilanKulkas();
+
+    hitungTotalFisik();
+
+    barcodeSekarang = hasil.KODE;
+
+    stokSistemSekarang = Number(hasil.STOK);
+
+    namaSekarang = hasil.NAMA;
+
+    rakSekarang = hasil.RAK;
+
+    simpanKondisiAplikasi();
+
+    document.getElementById("kodeProduk").innerHTML =
+        hasil.KODE;
+
+    document.getElementById("namaProduk").innerHTML =
+        hasil.NAMA;
+
+    document.getElementById("rakProduk").innerHTML =
+        hasil.RAK;
+
+    document.getElementById("stokProduk").innerHTML =
+        hasil.STOK;
+
+    // Kosongkan hasil pencarian
+    inputCariProduk.value = "";
+
+    hasilPencarianProduk.innerHTML = "";
+}
 
 function bunyiBeep() {
     try {
