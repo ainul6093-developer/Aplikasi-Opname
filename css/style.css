@@ -138,3 +138,20 @@ input {
     color: #777;
     font-size: 14px;
 }
+
+/* Efek kode setelah disalin */
+.kode-tersalin {
+    animation: kedipKode 0.25s ease-in-out 2;
+    border-radius: 8px;
+}
+
+@keyframes kedipKode {
+    0%, 100% {
+        background: transparent;
+        color: inherit;
+    }
+    50% {
+        background: #ff0000;
+        color: white;
+    }
+}
