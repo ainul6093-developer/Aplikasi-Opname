@@ -530,19 +530,29 @@ document.getElementById("btnSimpan").addEventListener(
 
     }
 );
+
 document.getElementById("copyKode").addEventListener("click", async function () {
 
-    const kode = document.getElementById("kodeProduk").innerText;
+    const kodeElement = document.getElementById("kodeProduk");
+    const barisKode = document.getElementById("barisKode");
+    const kode = kodeElement.innerText;
 
     if (kode == "-") {
 
         alert("Belum ada kode.");
 
         return;
-
     }
 
     await navigator.clipboard.writeText(kode);
+
+    // Efek berkedip merah 2x
+    barisKode.classList.remove("kode-tersalin");
+
+    // Memaksa animasi bisa berjalan lagi setiap kali tombol ditekan
+    void barisKode.offsetWidth;
+
+    barisKode.classList.add("kode-tersalin");
 
 });
 
