@@ -195,6 +195,71 @@ font-weight:bold;">
 
 </div>
 
+<label style="
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-left:auto;
+    margin-right:10px;
+    cursor:pointer;
+    white-space:nowrap;
+">
+
+    <span style="
+        font-size:12px;
+        font-weight:bold;
+        color:#555;
+    ">
+        AUTO
+    </span>
+
+    <span style="
+        position:relative;
+        display:inline-block;
+        width:52px;
+        height:30px;
+    ">
+
+        <input
+            type="checkbox"
+            id="toggleAutoSalin"
+            style="
+                opacity:0;
+                width:0;
+                height:0;
+            "
+        >
+
+        <span
+            id="autoSalinSwitch"
+            style="
+                position:absolute;
+                inset:0;
+                background:#bdbdbd;
+                border-radius:30px;
+                transition:0.3s;
+            "
+        ></span>
+
+        <span
+            id="autoSalinKnob"
+            style="
+                position:absolute;
+                width:24px;
+                height:24px;
+                left:3px;
+                top:3px;
+                background:white;
+                border-radius:50%;
+                transition:0.3s;
+                box-shadow:0 1px 3px rgba(0,0,0,0.25);
+            "
+        ></span>
+
+    </span>
+
+</label>
+  
 <button
 id="copyKode"
 style="
