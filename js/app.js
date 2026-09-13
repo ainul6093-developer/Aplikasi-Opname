@@ -1,8 +1,190 @@
+// ================================
+// SISTEM NOTIFIKASI GLOBAL
+// ================================
+
+function notif(pesan) {
+
+    const notifikasi = document.createElement("div");
+
+    notifikasi.innerText = pesan;
+
+    notifikasi.style.cssText = `
+        position:fixed !important;
+        top:50vh !important;
+        left:50vw !important;
+        transform:translate(-50%, -50%) !important;
+        
+        background:white;
+        color:#000000;
+        padding:14px 22px;
+        border-radius:10px;
+        font-size:16px;
+        font-weight:bold;
+        white-space:nowrap;
+        z-index:9999;
+        box-shadow:0 3px 10px rgba(0,0,0,0.2);
+
+        pointer-events:none;
+
+        opacity:0;
+        transition:opacity 0.25s ease;
+    `;
+
+    document.body.appendChild(notifikasi);
+
+    // Muncul perlahan
+    setTimeout(function () {
+        notifikasi.style.opacity = "1";
+    }, 50);
+
+    // Mulai menghilang
+    setTimeout(function () {
+        notifikasi.style.opacity = "0";
+    }, 1750);
+
+    // Hapus setelah selesai
+    setTimeout(function () {
+        notifikasi.remove();
+    }, 2000);
+}
+
+
+// Semua alert() otomatis menggunakan notif global
+window.alert = function(pesan) {
+    notif(pesan);
+};
+
+
+// ================================
+// SISTEM KONFIRMASI GLOBAL
+// ================================
+
+function konfirmasi(judul, pesan) {
+
+    return new Promise(function(resolve) {
+
+        const overlay = document.createElement("div");
+
+        overlay.style.cssText = `
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.35);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:10000;
+        `;
+
+        const popup = document.createElement("div");
+
+        popup.style.cssText = `
+            background:white;
+            width:calc(100% - 40px);
+            max-width:360px;
+            padding:22px;
+            border-radius:16px;
+            box-shadow:0 8px 30px rgba(0,0,0,0.2);
+            text-align:center;
+            font-family:inherit;
+            transform:scale(0.95);
+            opacity:0;
+            transition:opacity 0.2s ease, transform 0.2s ease;
+        `;
+
+        popup.innerHTML = `
+            <div style="
+                font-size:30px;
+                margin-bottom:10px;
+            ">⚠️</div>
+
+            <div style="
+                font-size:19px;
+                font-weight:bold;
+                margin-bottom:8px;
+            ">
+                ${judul}
+            </div>
+
+            <div style="
+                font-size:14px;
+                color:#666;
+                line-height:1.5;
+                margin-bottom:20px;
+            ">
+                ${pesan}
+            </div>
+
+            <div style="
+                display:flex;
+                gap:10px;
+            ">
+                <button id="btnBatalReset" style="
+                    flex:1;
+                    padding:11px;
+                    border:none;
+                    border-radius:9px;
+                    background:#eeeeee;
+                    font-size:15px;
+                    font-weight:bold;
+                ">
+                    Batal
+                </button>
+
+                <button id="btnKonfirmasiReset" style="
+                    flex:1;
+                    padding:11px;
+                    border:none;
+                    border-radius:9px;
+                    background:#d32f2f;
+                    color:white;
+                    font-size:15px;
+                    font-weight:bold;
+                ">
+                    Reset
+                </button>
+            </div>
+        `;
+
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+
+        // Animasi muncul
+        setTimeout(function() {
+            popup.style.opacity = "1";
+            popup.style.transform = "scale(1)";
+        }, 30);
+
+        document.getElementById("btnBatalReset")
+            .addEventListener("click", function() {
+                tutup(false);
+            });
+
+        document.getElementById("btnKonfirmasiReset")
+            .addEventListener("click", function() {
+                tutup(true);
+            });
+
+        function tutup(hasil) {
+
+            popup.style.opacity = "0";
+            popup.style.transform = "scale(0.95)";
+
+            setTimeout(function() {
+                overlay.remove();
+                resolve(hasil);
+            }, 200);
+        }
+
+    });
+}
+
 const input = document.getElementById("excelFile");
 
 let dataProduk = [];
 
 let barcodeSekarang = "";
+
+let autoSalinAktif = false;
 
 // ================================
 // PENCARIAN PRODUK
@@ -225,7 +407,7 @@ simpanKondisiAplikasi();
 
 
 alert(
-    "Produk berhasil dimuat : " +
+    " ✅ Produk berhasil dimuat : " +
     dataProduk.length
 );
     
@@ -305,11 +487,54 @@ function pilihProdukDariPencarian(hasil) {
     document.getElementById("stokProduk").innerHTML =
         hasil.STOK;
 
+  // AUTO SALIN SETELAH PILIH PRODUK DARI PENCARIAN
+if (autoSalinAktif) {
+
+    setTimeout(function () {
+
+        document.getElementById("copyKode").click();
+
+    }, 500);
+
+}
+
     // Kosongkan hasil pencarian
     inputCariProduk.value = "";
 
     hasilPencarianProduk.innerHTML = "";
 }
+
+
+// ================================
+// TOGGLE AUTO SALIN
+// ================================
+
+document.getElementById("toggleAutoSalin").addEventListener(
+    "change",
+    function () {
+
+        autoSalinAktif = this.checked;
+
+        const switchBg =
+            document.getElementById("autoSalinSwitch");
+
+        const knob =
+            document.getElementById("autoSalinKnob");
+
+        if (autoSalinAktif) {
+
+            switchBg.style.background = "#2196F3";
+            knob.style.left = "25px";
+
+        } else {
+
+            switchBg.style.background = "#bdbdbd";
+            knob.style.left = "3px";
+
+        }
+
+    }
+);
 
 function bunyiBeep() {
     try {
@@ -335,7 +560,7 @@ btnScan.addEventListener("click", function () {
 
     if (dataProduk.length == 0) {
 
-        alert("Import file Excel terlebih dahulu.");
+        alert("Import file Excel terlebih dahulu ‼️");
 
         return;
 
@@ -443,6 +668,18 @@ document.getElementById("rakProduk").innerHTML =
 
 document.getElementById("stokProduk").innerHTML =
     hasil.STOK;
+
+          // AUTO SALIN SETELAH SCAN
+    
+if (autoSalinAktif) {
+
+    setTimeout(function () {
+
+        document.getElementById("copyKode").click();
+
+    }, 500);
+
+}
     
         },
 
@@ -485,11 +722,22 @@ document.getElementById("btnSimpan").addEventListener(
 
         if (barcodeSekarang == "") {
 
-            alert("Scan produk terlebih dahulu.");
+            alert("Scan produk terlebih dahulu ‼️");
 
             return;
 
         }
+
+      const inputStokFisik = document.getElementById("stokFisik");
+
+if (inputStokFisik.value.trim() === "") {
+
+    alert("Masukkan stok fisik dulu ‼️");
+
+    inputStokFisik.focus();
+
+    return;
+}
 
         const kulkas = kulkasAktif
             ? Number(document.getElementById("stokKulkas").value) || 0
@@ -526,8 +774,8 @@ document.getElementById("btnSimpan").addEventListener(
 
         simpanKondisiAplikasi();
 
-        alert("✅ Data berhasil disimpan");
-
+        notif("✅ Data berhasil disimpan");
+      
     }
 );
 
@@ -536,23 +784,28 @@ document.getElementById("copyKode").addEventListener("click", async function () 
     const kodeElement = document.getElementById("kodeProduk");
     const barisKode = document.getElementById("barisKode");
     const kode = kodeElement.innerText;
+    const produkElement = document.getElementById("namaProduk");
 
     if (kode == "-") {
 
-        alert("Belum ada kode.");
+        alert("❌ Belum ada kode");
 
         return;
     }
 
     await navigator.clipboard.writeText(kode);
 
-    // Efek berkedip merah 2x
+    // EFEK BERKEDIP MERAH 2x
+  
     barisKode.classList.remove("kode-tersalin");
+    produkElement.classList.remove("kode-tersalin");
 
     // Memaksa animasi bisa berjalan lagi setiap kali tombol ditekan
     void barisKode.offsetWidth;
+    void produkElement.offsetWidth;
 
     barisKode.classList.add("kode-tersalin");
+    produkElement.classList.add("kode-tersalin");
 
 });
 
@@ -683,9 +936,11 @@ item.style.cssText = `
                 Rak : ${data.rak}
             </div>
 
+                  ${data.kulkasAktif ? `
             <div style="margin-top:5px;">
                 Kulkas : ${data.kulkas}
             </div>
+                      ` : ""}
 
             <div>
                 Fisik : ${data.fisik}
@@ -796,16 +1051,16 @@ pulihkanTampilanTerakhir();
 
 document.getElementById("btnReset").addEventListener(
     "click",
-    function () {
+    async function () {
 
-        const yakin = confirm(
-            "Reset aplikasi?\n\n" +
-            "Semua data opname dan file Excel akan dihapus."
-        );
+        const yakin = await konfirmasi(
+    "Reset aplikasi?",
+    "Semua data opname dan file Excel akan dihapus."
+);
 
-        if (!yakin) {
-            return;
-        }
+if (!yakin) {
+    return;
+}
 
         localStorage.removeItem("opnameTokoData");
 
@@ -850,7 +1105,7 @@ document.getElementById("btnReset").addEventListener(
 
         document.getElementById("excelFile").value = "";
 
-        alert("✅ Aplikasi berhasil direset.");
+        alert("✅ Aplikasi berhasil direset");
 
     }
 );
