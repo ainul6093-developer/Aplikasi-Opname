@@ -141,7 +141,7 @@ input {
 
 /* Efek kode setelah disalin */
 .kode-tersalin {
-    animation: kedipKode 0.25s ease-in-out 2;
+    animation: kedipKode 0.25s ease-in-out 3;
     border-radius: 8px;
 }
 
