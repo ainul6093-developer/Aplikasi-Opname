@@ -677,7 +677,7 @@ if (autoSalinAktif) {
 
         document.getElementById("copyKode").click();
 
-    }, 500);
+    }, 200);
 
 }
     
