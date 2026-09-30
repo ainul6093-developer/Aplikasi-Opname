@@ -442,17 +442,18 @@ let torchNyala = false;
 
 function pilihProdukDariPencarian(hasil) {
 
-    const dataLama =
-        dataTersimpan[String(hasil.KODE).trim()];
+const dataLama = dataTersimpan[String(hasil.KODE).trim()];
 
-    if (dataLama) {
+if (dataLama) {
 
-        document.getElementById("stokKulkas").value =
-            dataLama.kulkas;
+    kulkasAktif = dataLama.kulkasAktif || false;
 
-        document.getElementById("stokFisik").value =
-            dataLama.fisik;
+    document.getElementById("stokKulkas").value =
+        dataLama.kulkas ?? "";
 
+    document.getElementById("stokFisik").value =
+        dataLama.fisik ?? "";
+  
     } else {
 
         document.getElementById("stokKulkas").value = "";
@@ -628,18 +629,23 @@ const dataLama = dataTersimpan[String(hasil.KODE).trim()];
 
 if (dataLama) {
 
+    kulkasAktif = dataLama.kulkasAktif || false;
+
     document.getElementById("stokKulkas").value =
-        dataLama.kulkas;
+        dataLama.kulkas ?? "";
 
     document.getElementById("stokFisik").value =
-        dataLama.fisik;
+        dataLama.fisik ?? "";
 
 } else {
+
+  
+    kulkasAktif = false;
 
     document.getElementById("stokKulkas").value = "";
 
     document.getElementById("stokFisik").value = "";
-
+  
 }
 
 aturTampilanKulkas();
@@ -728,14 +734,17 @@ document.getElementById("btnSimpan").addEventListener(
 
         }
 
-      const inputStokFisik = document.getElementById("stokFisik");
+      const inputStokKulkas =
+        document.getElementById("stokKulkas");
 
-if (inputStokFisik.value.trim() === "") {
+      const inputStokFisik =
+        document.getElementById("stokFisik");
 
-    alert("Masukkan stok fisik dulu ‼️");
-
-    inputStokFisik.focus();
-
+if (
+    inputStokKulkas.value.trim() === "" &&
+    inputStokFisik.value.trim() === ""
+) {
+    alert("Isi stok kulkas atau stok fisik terlebih dahulu ‼️");
     return;
 }
 
@@ -775,9 +784,36 @@ if (inputStokFisik.value.trim() === "") {
         simpanKondisiAplikasi();
 
         notif("✅ Data berhasil disimpan");
+
+
+// KEMBALIKAN KE KONDISI AWAL
+barcodeSekarang = "";
+stokSistemSekarang = 0;
+namaSekarang = "";
+rakSekarang = "";
+
+document.getElementById("kodeProduk").innerHTML = "-";
+document.getElementById("namaProduk").innerHTML = "Belum ada produk";
+document.getElementById("rakProduk").innerHTML = "-";
+document.getElementById("stokProduk").innerHTML = "-";
+
+document.getElementById("stokKulkas").value = "";
+document.getElementById("stokFisik").value = "";
+document.getElementById("totalFisik").innerText = "0";
+
+kulkasAktif = false;
+
+const toggleKulkas =
+    document.getElementById("toggleKulkas");
+
+toggleKulkas.checked = false;
+
+aturTampilanKulkas();
+
       
     }
 );
+
 
 document.getElementById("copyKode").addEventListener("click", async function () {
 
@@ -877,26 +913,18 @@ function aturTampilanKulkas() {
     hitungTotalFisik();
 }
 
-
 document.getElementById("toggleKulkas").addEventListener(
     "change",
     function () {
 
         kulkasAktif = this.checked;
 
-      simpanKondisiAplikasi();
-
-        if (!kulkasAktif) {
-
-            document.getElementById("stokKulkas").value = "";
-
-        }
+        simpanKondisiAplikasi();
 
         aturTampilanKulkas();
 
     }
 );
-
 
 aturTampilanKulkas();
 
