@@ -1,1 +1,564 @@
+* {
+    box-sizing: border-box;
+}
 
+
+body {
+    margin: 0;
+    background: #f3f6f8;
+    color: #222;
+    font-family: Arial, sans-serif;
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+.header {
+    background: #1976d2;
+    color: white;
+    padding: 12px 15px;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 20;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.12);
+}
+
+
+.header-inner {
+    max-width: 1100px;
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+
+    min-height: 42px;
+}
+
+
+.header h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+
+.header-spacer {
+    flex: 1;
+}
+
+
+.back-button {
+    width: 40px;
+    height: 40px;
+
+    margin-right: 8px;
+
+    border: 0;
+    background: transparent;
+
+    color: white;
+
+    font-size: 32px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+/* ================================
+   CONTAINER
+================================ */
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 12px;
+}
+
+
+/* ================================
+   CONTROL
+================================ */
+
+.control-card,
+.table-card {
+
+    background: white;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.08);
+}
+
+
+.control-card {
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+
+.top-controls {
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom: 10px;
+}
+
+
+.rack-control {
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.rack-control label,
+.toggle-control {
+
+    font-weight: bold;
+    font-size: 14px;
+}
+
+
+.rack-control input {
+
+    width: 105px;
+
+    padding: 9px 10px;
+
+    border: 1px solid #bbb;
+
+    border-radius: 7px;
+
+    font-size: 16px;
+
+    text-transform: uppercase;
+
+    outline: none;
+}
+
+
+.rack-control input:focus,
+.search-input:focus {
+
+    border-color: #1976d2;
+}
+
+
+/* ================================
+   HIDDEN COPY TOGGLE
+================================ */
+
+.toggle-control {
+
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    cursor: pointer;
+
+    user-select: none;
+}
+
+
+.switch {
+
+    position: relative;
+
+    width: 48px;
+    height: 28px;
+
+    display: inline-block;
+}
+
+
+.switch input {
+
+    opacity: 0;
+
+    width: 0;
+    height: 0;
+
+    position: absolute;
+}
+
+
+.slider {
+
+    position: absolute;
+
+    inset: 0;
+
+    background: #bdbdbd;
+
+    border-radius: 30px;
+
+    transition: .2s;
+}
+
+
+.slider::before {
+
+    content: '';
+
+    position: absolute;
+
+    width: 22px;
+    height: 22px;
+
+    left: 3px;
+    top: 3px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 1px 3px rgba(0,0,0,.25);
+
+    transition: .2s;
+}
+
+
+.switch input:checked + .slider {
+
+    background: #2196f3;
+}
+
+
+.switch input:checked + .slider::before {
+
+    transform: translateX(20px);
+}
+
+
+/* ================================
+   SEARCH
+================================ */
+
+.search-input {
+
+    width: 100%;
+
+    padding: 11px 12px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    outline: none;
+}
+
+
+/* ================================
+   TABLE
+================================ */
+
+.table-card {
+
+    overflow: hidden;
+}
+
+
+.table-wrap {
+
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 620px;
+}
+
+
+th,
+td {
+
+    padding: 10px 9px;
+
+    border-bottom: 1px solid #e8e8e8;
+
+    text-align: left;
+
+    vertical-align: middle;
+}
+
+
+th {
+
+    background: #f7f9fb;
+
+    font-size: 13px;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 2;
+}
+
+
+td {
+
+    font-size: 14px;
+}
+
+
+.col-code {
+    width: 150px;
+}
+
+
+.col-rack {
+    width: 85px;
+}
+
+
+.col-stock {
+
+    width: 70px;
+
+    text-align: right;
+}
+
+
+th.col-stock {
+
+    text-align: right;
+}
+
+
+.col-action {
+
+    width: 62px;
+
+    text-align: center;
+}
+
+
+/* ================================
+   BARCODE
+================================ */
+
+.code-button {
+
+    border: 0;
+
+    background: transparent;
+
+    padding: 0;
+
+    color: #111;
+
+    font: inherit;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    text-align: left;
+}
+
+
+.code-button:active {
+
+    opacity: .55;
+}
+
+
+/* ================================
+   HIDDEN DATA
+================================ */
+
+.hidden-value {
+
+    color: #aaa;
+
+    letter-spacing: 2px;
+
+    user-select: none;
+}
+
+
+.hidden-row td:not(:last-child) {
+
+    color: transparent;
+}
+
+
+.hidden-row .hidden-value {
+
+    color: #aaa;
+}
+
+
+/* ================================
+   ICON MATA
+================================ */
+
+.eye-button {
+
+    border: 0;
+
+    background: transparent;
+
+    width: 40px;
+
+    height: 36px;
+
+    padding: 0;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+
+.eye-button:active {
+
+    transform: scale(.9);
+}
+
+
+/* ================================
+   EMPTY
+================================ */
+
+.empty-state {
+
+    padding: 30px 15px;
+
+    text-align: center;
+
+    color: #777;
+
+    display: none;
+}
+
+
+/* ================================
+   PAGINATION
+================================ */
+
+.pagination {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    padding: 10px;
+
+    border-top: 1px solid #eee;
+}
+
+
+.pagination button {
+
+    width: 38px;
+    height: 36px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: #1976d2;
+
+    color: white;
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+.pagination button:disabled {
+
+    background: #c7c7c7;
+
+    cursor: default;
+}
+
+
+#pageInfo {
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    min-width: 100px;
+
+    text-align: center;
+}
+
+
+/* ================================
+   HP
+================================ */
+
+@media (max-width: 600px) {
+
+    .container {
+
+        padding: 8px;
+    }
+
+
+    .top-controls {
+
+        gap: 10px;
+    }
+
+
+    .rack-control input {
+
+        width: 90px;
+    }
+
+
+    .toggle-control {
+
+        gap: 5px;
+
+        font-size: 12px;
+    }
+
+
+    th,
+    td {
+
+        padding: 9px 7px;
+    }
+
+}
