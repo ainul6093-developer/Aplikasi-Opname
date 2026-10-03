@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Croscheck</title>
+
+    <link
+        rel="stylesheet"
+        href="css/croscheck.css">
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <button
+            id="btnBack"
+            class="back-button"
+            type="button">
+            ‹
+        </button>
+
+        <h1>✓ Croscheck</h1>
+
+        <div class="header-spacer"></div>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <!-- =========================
+         FILTER CROS CHECK
+    ========================== -->
+
+    <section class="control-card">
+
+        <div class="top-controls">
+
+            <div class="rack-control">
+
+                <label for="inputRak">
+                    Rak
+                </label>
+
+                <input
+                    id="inputRak"
+                    type="text"
+                    placeholder="T001"
+                    autocomplete="off">
+
+            </div>
+
+
+            <label class="toggle-control">
+
+                <span>
+                    Hidden Copy
+                </span>
+
+                <span class="switch">
+
+                    <input
+                        id="toggleHiddenCopy"
+                        type="checkbox">
+
+                    <span class="slider"></span>
+
+                </span>
+
+            </label>
+
+        </div>
+
+
+        <input
+            id="inputSearch"
+            class="search-input"
+            type="text"
+            placeholder="🔎 Cari barcode / nama produk..."
+            autocomplete="off">
+
+    </section>
+
+
+    <!-- =========================
+         TABEL PRODUK
+    ========================== -->
+
+    <section class="table-card">
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th class="col-code">
+                            Barcode
+                        </th>
+
+                        <th>
+                            Produk
+                        </th>
+
+                        <th class="col-rack">
+                            Rak
+                        </th>
+
+                        <th class="col-stock">
+                            Stok
+                        </th>
+
+                        <th class="col-action">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="productTableBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            id="emptyState"
+            class="empty-state">
+
+            Belum ada data produk.
+
+        </div>
+
+
+        <!-- PAGINATION -->
+
+        <div class="pagination">
+
+            <button
+                id="btnPrev"
+                type="button">
+                ‹
+            </button>
+
+
+            <span id="pageInfo">
+                Halaman 1 / 1
+            </span>
+
+
+            <button
+                id="btnNext"
+                type="button">
+                ›
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script src="js/croscheck.js"></script>
+
+</body>
+
+  </html>
