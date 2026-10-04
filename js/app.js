@@ -186,8 +186,9 @@ let barcodeSekarang = "";
 
 let autoSalinAktif = false;
 
+
 // ================================
-// PENCARIAN PRODUK
+// PENCARIAN PRODUK CEPAT
 // ================================
 
 const inputCariProduk =
@@ -196,9 +197,13 @@ const inputCariProduk =
 const hasilPencarianProduk =
     document.getElementById("hasilPencarianProduk");
 
+let searchTimer = null;
+
 inputCariProduk.addEventListener("input", function () {
 
     const kata = this.value.trim().toLowerCase();
+
+    clearTimeout(searchTimer);
 
     hasilPencarianProduk.innerHTML = "";
 
@@ -216,53 +221,91 @@ inputCariProduk.addEventListener("input", function () {
         return;
     }
 
-    const hasil = dataProduk.filter(function (item) {
+    searchTimer = setTimeout(function () {
 
-        const kode =
-            String(item.KODE || "").toLowerCase();
+        const hasil = [];
 
-        const nama =
-            String(item.NAMA || "").toLowerCase();
+        // Maksimal 50 hasil yang ditampilkan
+        for (let i = 0; i < dataProduk.length; i++) {
 
-        return kode.includes(kata) ||
-               nama.includes(kata);
+            const item = dataProduk[i];
 
-    });
+            const kode =
+                String(item.KODE || "").toLowerCase();
 
-    if (hasil.length === 0) {
+            const nama =
+                String(item.NAMA || "").toLowerCase();
 
-        hasilPencarianProduk.innerHTML =
-            '<div class="tidak-ditemukan">' +
-            '❌ Produk tidak ditemukan' +
-            '</div>';
+            if (
+                kode.includes(kata) ||
+                nama.includes(kata)
+            ) {
 
-        return;
-    }
+                hasil.push(item);
 
-    hasil.forEach(function (item) {
+                if (hasil.length >= 50) {
+                    break;
+                }
 
-        const div =
-            document.createElement("div");
+            }
 
-        div.className = "hasil-produk";
+        }
 
-        div.innerHTML =
-            '<span class="hasil-produk-kode">' +
-            item.KODE +
-            '</span> : ' +
-            '<span class="hasil-produk-nama">' +
-            item.NAMA +
-            '</span>';
+        if (hasil.length === 0) {
 
-        div.addEventListener("click", function () {
+            hasilPencarianProduk.innerHTML =
+                '<div class="tidak-ditemukan">' +
+                '❌ Produk tidak ditemukan' +
+                '</div>';
 
-            pilihProdukDariPencarian(item);
+            return;
+        }
+
+        let html = "";
+
+        hasil.forEach(function (item, index) {
+
+            html +=
+                '<div class="hasil-produk" data-index="' +
+                index +
+                '">' +
+
+                '<span class="hasil-produk-kode">' +
+                item.KODE +
+                '</span> : ' +
+
+                '<span class="hasil-produk-nama">' +
+                item.NAMA +
+                ' (' + item.STOK + ')' +
+                '</span>' +
+
+                '</div>';
 
         });
 
-        hasilPencarianProduk.appendChild(div);
+        hasilPencarianProduk.innerHTML = html;
 
-    });
+        const hasilElements =
+            hasilPencarianProduk.querySelectorAll(
+                ".hasil-produk"
+            );
+
+        hasilElements.forEach(function (element, index) {
+
+            element.addEventListener(
+                "click",
+                function () {
+
+                    pilihProdukDariPencarian(
+                        hasil[index]
+                    );
+
+                }
+            );
+
+        });
+
+    }, 100);
 
 });
 
@@ -395,6 +438,11 @@ statusImportTersimpan =
     "📂 " + file.name +
     "<br>✅ Produk berhasil dimuat : " +
     dataProduk.length;
+
+      document.getElementById("uploadStatus").innerText =
+    "📂 Upload File Excel (" +
+    dataProduk.length.toLocaleString("id-ID") +
+    " produk) ✅";
 
 
 // Tampilkan keterangan
@@ -1044,6 +1092,18 @@ function pulihkanTampilanTerakhir() {
             dataAplikasi.statusImportTersimpan ||
             "📂 Belum ada file dipilih";
 
+      const uploadStatus = document.getElementById("uploadStatus");
+
+if (dataProduk.length > 0) {
+    uploadStatus.innerText =
+        "📂 Upload File Excel (" +
+        dataProduk.length.toLocaleString("id-ID") +
+        " produk) ✅";
+} else {
+    uploadStatus.innerText =
+        "📂 Upload File Excel (.....) ❌";
+}
+
         document.getElementById("stokKulkas").value =
             dataAplikasi.stokKulkas || "";
 
@@ -1131,9 +1191,103 @@ if (!yakin) {
         document.getElementById("statusImport").innerHTML =
             "📂 Belum ada file dipilih";
 
+        document.getElementById("uploadStatus").innerText =
+            "📂 Upload File Excel (.....) ❌";
+
         document.getElementById("excelFile").value = "";
 
         alert("✅ Aplikasi berhasil direset");
+
+    }
+);
+
+
+// ================================
+// SIDEBAR MENU
+// ================================
+
+const btnMenu =
+    document.getElementById("btnMenu");
+
+const sidebarMenu =
+    document.getElementById("sidebarMenu");
+
+const sidebarOverlay =
+    document.getElementById("sidebarOverlay");
+
+const closeSidebar =
+    document.getElementById("closeSidebar");
+
+
+function bukaSidebar() {
+
+    sidebarMenu.classList.add("show");
+
+    sidebarOverlay.classList.add("show");
+
+}
+
+
+function tutupSidebar() {
+
+    sidebarMenu.classList.remove("show");
+
+    sidebarOverlay.classList.remove("show");
+
+}
+
+
+btnMenu.addEventListener(
+    "click",
+    bukaSidebar
+);
+
+
+closeSidebar.addEventListener(
+    "click",
+    tutupSidebar
+);
+
+
+sidebarOverlay.addEventListener(
+    "click",
+    tutupSidebar
+);
+
+document.getElementById("menuCroscheck").addEventListener(
+    "click",
+    function () {
+        window.location.href = "croscheck.html";
+    }
+);
+
+
+// ================================
+// DROPDOWN UPLOAD EXCEL
+// ================================
+
+const toggleUploadExcel =
+    document.getElementById("toggleUploadExcel");
+
+const uploadExcelArea =
+    document.getElementById("uploadExcelArea");
+
+const uploadArrow =
+    document.getElementById("uploadArrow");
+
+const uploadStatus =
+    document.getElementById("uploadStatus");
+
+
+toggleUploadExcel.addEventListener(
+    "click",
+    function () {
+
+        const tertutup =
+            uploadExcelArea.classList.toggle("hidden");
+
+        uploadArrow.textContent =
+            tertutup ? "▼" : "▲";
 
     }
 );
