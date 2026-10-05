@@ -9,7 +9,6 @@ const STORAGE_KEY = "opnameTokoData";
 const HIDDEN_KEY =
     "croscheckHiddenProduk";
 
-
 const PAGE_SIZE = 100;
 
 
@@ -32,30 +31,26 @@ let renderTimer = null;
 const inputRak =
     document.getElementById("inputRak");
 
-
 const inputSearch =
     document.getElementById("inputSearch");
 
+const itemInfo =
+    document.getElementById("itemInfo");
 
 const toggleHiddenCopy =
     document.getElementById("toggleHiddenCopy");
 
-
 const tableBody =
     document.getElementById("productTableBody");
-
 
 const emptyState =
     document.getElementById("emptyState");
 
-
 const pageInfo =
     document.getElementById("pageInfo");
 
-
 const btnPrev =
     document.getElementById("btnPrev");
-
 
 const btnNext =
     document.getElementById("btnNext");
@@ -91,7 +86,6 @@ function bacaDataExcel() {
                 )
             );
 
-
         dataProduk =
             Array.isArray(
                 tersimpan?.dataProduk
@@ -99,13 +93,11 @@ function bacaDataExcel() {
                 ? tersimpan.dataProduk
                 : [];
 
-
     } catch (e) {
 
         dataProduk = [];
 
     }
-
 
 
     try {
@@ -116,7 +108,6 @@ function bacaDataExcel() {
                     HIDDEN_KEY
                 )
             ) || {};
-
 
     } catch (e) {
 
@@ -169,9 +160,11 @@ function kodeProduk(item) {
 function isHidden(item) {
 
     return (
+
         hiddenProduk[
             kodeProduk(item)
         ] === true
+
     );
 
 }
@@ -186,7 +179,6 @@ function setHidden(item, nilai) {
 
     const kode =
         kodeProduk(item);
-
 
     if (!kode) return;
 
@@ -251,16 +243,13 @@ function salinKode(kode) {
             "textarea"
         );
 
-
     area.value = kode;
 
     area.style.position = "fixed";
 
     area.style.opacity = "0";
 
-
     document.body.appendChild(area);
-
 
     area.select();
 
@@ -276,7 +265,6 @@ function salinKode(kode) {
             );
 
     } catch (e) {}
-
 
 
     area.remove();
@@ -301,7 +289,6 @@ function filterData() {
             inputRak.value
         );
 
-
     const search =
         normalisasi(
             inputSearch.value
@@ -324,10 +311,13 @@ function filterData() {
             function(item) {
 
                 if (
+
                     rak &&
+
                     normalisasi(
                         item.RAK
                     ) !== rak
+
                 ) {
 
                     return false;
@@ -347,7 +337,6 @@ function filterData() {
                         item.KODE
                     );
 
-
                 const nama =
                     normalisasi(
                         item.NAMA
@@ -355,8 +344,11 @@ function filterData() {
 
 
                 return (
+
                     kode.includes(search) ||
+
                     nama.includes(search)
+
                 );
 
             }
@@ -366,17 +358,24 @@ function filterData() {
 
     const totalHalaman =
         Math.max(
+
             1,
+
             Math.ceil(
+
                 filteredProduk.length /
                 PAGE_SIZE
+
             )
+
         );
 
 
     if (
+
         halamanSekarang >
         totalHalaman
+
     ) {
 
         halamanSekarang =
@@ -409,7 +408,9 @@ function jadwalkanRender(
 
 
     renderTimer =
+
         setTimeout(
+
             function() {
 
                 filterData();
@@ -417,8 +418,105 @@ function jadwalkanRender(
                 renderTabel();
 
             },
+
             30
+
         );
+
+}
+
+
+// =========================================
+// DOUBLE CLICK UNTUK SHOW / HIDDEN
+// =========================================
+
+function pasangDoubleClick(td, item) {
+
+    td.addEventListener(
+        "dblclick",
+        function(event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            setHidden(
+                item,
+                !isHidden(item)
+            );
+
+            renderTabel();
+
+        }
+    );
+
+}
+
+
+// =========================================
+// BUAT INPUT PLACEHOLDER HIDDEN
+// =========================================
+
+function buatPlaceholderHidden(
+    nilai,
+    item
+) {
+
+    const input =
+        document.createElement(
+            "input"
+        );
+
+
+    input.type = "text";
+
+    input.placeholder =
+        String(
+            nilai ?? "-"
+        );
+
+
+    input.readOnly = true;
+
+    input.tabIndex = -1;
+
+    input.className =
+        "hidden-placeholder";
+
+
+    /*
+        Double-click placeholder
+        untuk menampilkan data.
+    */
+
+    input.addEventListener(
+        "dblclick",
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            if (!isHidden(item)) {
+
+                return;
+
+            }
+
+
+            setHidden(
+                item,
+                false
+            );
+
+
+            renderTabel();
+
+        }
+    );
+
+
+    return input;
 
 }
 
@@ -460,32 +558,41 @@ function buatBaris(item) {
         );
 
 
-    const kodeButton =
-        document.createElement(
-            "button"
+    if (hidden) {
+
+        /*
+            Barcode tetap disimpan
+            sebagai data asli.
+
+            Yang ditampilkan adalah
+            native placeholder.
+        */
+
+        const placeholder =
+            buatPlaceholderHidden(
+                kodeProduk(item),
+                item
+            );
+
+
+        tdKode.appendChild(
+            placeholder
         );
 
 
-    kodeButton.type =
-        "button";
-
-
-    kodeButton.className =
-        "code-button";
-
-
-
-    if (hidden) {
-
-        kodeButton.innerHTML =
-            '<span class="hidden-value">••••••</span>';
-
-
-        kodeButton.title =
-            "Data tersembunyi — gunakan icon mata untuk menampilkan";
-
-
     } else {
+
+        const kodeButton =
+            document.createElement(
+                "button"
+            );
+
+
+        kodeButton.type =
+            "button";
+
+        kodeButton.className =
+            "code-button";
 
         kodeButton.textContent =
             kodeProduk(item) || "-";
@@ -493,22 +600,11 @@ function buatBaris(item) {
 
         kodeButton.title =
             toggleHiddenCopy.checked
+
                 ? "Klik untuk salin dan sembunyikan"
+
                 : "Klik untuk salin";
 
-    }
-
-
-
-    /*
-        Kalau data sudah hidden,
-        barcode tidak bisa diklik.
-
-        Harus dibuka dulu lewat
-        icon mata.
-    */
-
-    if (!hidden) {
 
         kodeButton.addEventListener(
             "click",
@@ -522,6 +618,7 @@ function buatBaris(item) {
 
 
                 salinKode(kode)
+
                     .then(
                         function(berhasil) {
 
@@ -562,12 +659,12 @@ function buatBaris(item) {
             }
         );
 
+
+        tdKode.appendChild(
+            kodeButton
+        );
+
     }
-
-
-    tdKode.appendChild(
-        kodeButton
-    );
 
 
 
@@ -581,22 +678,42 @@ function buatBaris(item) {
         );
 
 
-    tdNama.textContent =
-        hidden
-            ? "••••••"
-            : String(
-                item.NAMA ?? "-"
-            );
-
-
     if (hidden) {
 
-        tdNama.className =
-            "hidden-value";
+        tdNama.appendChild(
+
+            buatPlaceholderHidden(
+                item.NAMA ?? "-",
+                item
+            )
+
+        );
+
+} else {
+
+    const namaProduk =
+        document.createElement("div");
+
+    namaProduk.className =
+        "product-name";
+
+    namaProduk.textContent =
+        String(
+            item.NAMA ?? "-"
+        );
+
+    tdNama.appendChild(
+        namaProduk
+    );
 
     }
 
-
+  
+pasangDoubleClick(
+    tdNama,
+    item
+);
+  
 
     // =========================
     // RAK
@@ -608,22 +725,31 @@ function buatBaris(item) {
         );
 
 
-    tdRak.textContent =
-        hidden
-            ? "••••"
-            : String(
+    if (hidden) {
+
+        tdRak.appendChild(
+
+            buatPlaceholderHidden(
+                item.RAK ?? "-",
+                item
+            )
+
+        );
+
+    } else {
+
+        tdRak.textContent =
+            String(
                 item.RAK ?? "-"
             );
 
-
-    if (hidden) {
-
-        tdRak.className =
-            "hidden-value";
-
     }
 
-
+pasangDoubleClick(
+    tdRak,
+    item
+);
+  
 
     // =========================
     // STOK
@@ -635,100 +761,57 @@ function buatBaris(item) {
         );
 
 
-    tdStok.textContent =
-        hidden
-            ? "••"
-            : String(
-                item.STOK ?? "0"
+    if (hidden) {
+
+        const placeholderStok =
+            buatPlaceholderHidden(
+                item.STOK ?? "0",
+                item
             );
 
 
-    if (hidden) {
+        placeholderStok.style.textAlign =
+            "right";
 
-        tdStok.className =
-            "hidden-value";
+
+        tdStok.appendChild(
+            placeholderStok
+        );
+
+
+    } else {
+
+        tdStok.textContent =
+            String(
+                item.STOK ?? "0"
+            );
 
     }
 
 
     tdStok.style.textAlign =
-        "right";
-
-
-
-    // =========================
-    // ACTION
-    // =========================
-
-    const tdAction =
-        document.createElement(
-            "td"
-        );
-
-
-    tdAction.style.textAlign =
         "center";
 
-
-    const eyeButton =
-        document.createElement(
-            "button"
-        );
-
-
-    eyeButton.type =
-        "button";
-
-
-    eyeButton.className =
-        "eye-button";
-
-
-    /*
-        👁  = tampil
-        👁̶ = hidden
-    */
-
-    eyeButton.textContent =
-        hidden
-            ? "👁̶"
-            : "👁";
-
-
-    eyeButton.title =
-        hidden
-            ? "Tampilkan data"
-            : "Sembunyikan data";
-
-
-    eyeButton.addEventListener(
-        "click",
-        function() {
-
-            setHidden(
-                item,
-                !isHidden(item)
-            );
-
-
-            renderTabel();
-
-        }
-    );
-
-
-    tdAction.appendChild(
-        eyeButton
-    );
-
-
+pasangDoubleClick(
+    tdStok,
+    item
+);
+  
+  
+    // =========================
+    // GABUNGKAN BARIS
+    // =========================
 
     tr.append(
+
         tdKode,
+
         tdNama,
-        tdRak,
+
         tdStok,
-        tdAction
+
+        tdRak,
+
     );
 
 
@@ -744,13 +827,34 @@ function buatBaris(item) {
 
 function renderTabel() {
 
+const jumlahDitampilkan =
+    Math.min(
+        PAGE_SIZE,
+        Math.max(
+            0,
+            filteredProduk.length -
+            ((halamanSekarang - 1) * PAGE_SIZE)
+        )
+    );
+
+const totalProduk =
+    dataProduk.length;
+
+itemInfo.textContent =
+    `Showing ${jumlahDitampilkan.toLocaleString("id-ID")} of ${totalProduk.toLocaleString("id-ID")} item`;
+  
     const totalHalaman =
         Math.max(
+
             1,
+
             Math.ceil(
+
                 filteredProduk.length /
                 PAGE_SIZE
+
             )
+
         );
 
 
@@ -761,8 +865,11 @@ function renderTabel() {
 
     const akhir =
         Math.min(
+
             start + PAGE_SIZE,
+
             filteredProduk.length
+
         );
 
 
@@ -771,7 +878,9 @@ function renderTabel() {
 
 
     if (
+
         filteredProduk.length === 0
+
     ) {
 
         emptyState.style.display =
@@ -779,8 +888,11 @@ function renderTabel() {
 
 
         emptyState.textContent =
+
             dataProduk.length === 0
+
                 ? "Belum ada file Excel yang di-upload."
+
                 : "Produk tidak ditemukan.";
 
 
@@ -800,15 +912,23 @@ function renderTabel() {
 
 
         for (
+
             let i = start;
+
             i < akhir;
+
             i++
+
         ) {
 
             fragment.appendChild(
+
                 buatBaris(
+
                     filteredProduk[i]
+
                 )
+
             );
 
         }
@@ -880,12 +1000,8 @@ inputSearch.addEventListener(
     function() {
 
         /*
-            Tidak langsung render
-            setiap karakter.
-
-            Tunggu 30ms agar tetap
-            ringan tetapi terasa
-            responsif.
+            Tunggu 30ms agar search
+            tetap ringan dan responsif.
         */
 
         jadwalkanRender(true);
@@ -904,7 +1020,9 @@ btnPrev.addEventListener(
     function() {
 
         if (
+
             halamanSekarang <= 1
+
         ) {
 
             return;
@@ -919,8 +1037,11 @@ btnPrev.addEventListener(
 
 
         window.scrollTo({
+
             top: 0,
+
             behavior: "smooth"
+
         });
 
     }
@@ -938,17 +1059,24 @@ btnNext.addEventListener(
 
         const totalHalaman =
             Math.max(
+
                 1,
+
                 Math.ceil(
+
                     filteredProduk.length /
                     PAGE_SIZE
+
                 )
+
             );
 
 
         if (
+
             halamanSekarang >=
             totalHalaman
+
         ) {
 
             return;
@@ -963,8 +1091,11 @@ btnNext.addEventListener(
 
 
         window.scrollTo({
+
             top: 0,
+
             behavior: "smooth"
+
         });
 
     }
@@ -999,7 +1130,9 @@ window.addEventListener(
     function(event) {
 
         if (
+
             event.key === STORAGE_KEY
+
         ) {
 
             bacaDataExcel();
