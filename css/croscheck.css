@@ -2,12 +2,14 @@
     box-sizing: border-box;
 }
 
+
 body {
     margin: 0;
     background: #f3f6f8;
     color: #222;
     font-family: Arial, sans-serif;
 }
+
 
 
 /* ================================
@@ -24,6 +26,7 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,.12);
 }
 
+
 .header-inner {
     max-width: 1100px;
     margin: auto;
@@ -32,14 +35,17 @@ body {
     min-height: 42px;
 }
 
+
 .header h1 {
     margin: 0;
     font-size: 20px;
 }
 
+
 .header-spacer {
     flex: 1;
 }
+
 
 .back-button {
     width: 40px;
@@ -54,6 +60,7 @@ body {
 }
 
 
+
 /* ================================
    CONTAINER
 ================================ */
@@ -64,6 +71,7 @@ body {
     margin: auto;
     padding: 12px;
 }
+
 
 
 /* ================================
@@ -77,44 +85,249 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
 
+
 .control-card {
     padding: 12px;
     margin-bottom: 10px;
 }
 
+
 .top-controls {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 12px;
     margin-bottom: 10px;
 }
 
-.rack-control {
+
+
+/* ================================
+   RAK FILTER
+================================ */
+
+.rak-filter {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
 }
 
-.rack-control label,
-.toggle-control {
+
+.rak-label {
     font-weight: bold;
     font-size: 14px;
 }
 
-.rack-control input {
-    width: 105px;
-    padding: 9px 10px;
+
+.rak-filter-button {
+    min-width: 125px;
+    height: 38px;
+    padding: 0 10px;
     border: 1px solid #bbb;
     border-radius: 7px;
-    font-size: 16px;
-    text-transform: uppercase;
-    outline: none;
+    background: white;
+    color: #222;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
 }
 
-.rack-control input:focus,
-.search-input:focus {
-    border-color: #1976d2;
+
+.rak-filter-button:active {
+    background: #f1f3f5;
 }
+
+
+.rak-arrow {
+    float: right;
+    margin-left: 8px;
+}
+
+
+
+/* ================================
+   RAK POPUP
+================================ */
+
+.rak-popup {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 290px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 5px 18px rgba(0,0,0,.18);
+    padding: 12px;
+    z-index: 50;
+    display: none;
+}
+
+
+.rak-popup.show {
+    display: block;
+}
+
+
+.rak-popup-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+
+.rak-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+
+.rak-mode label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+.rak-mode input {
+    margin: 0;
+}
+
+
+
+/* ================================
+   RAK OPTION
+================================ */
+
+.rak-option-area {
+    padding-top: 10px;
+}
+
+
+.rak-option-title {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+
+.rak-list {
+    max-height: 190px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    padding: 7px;
+}
+
+
+.rak-list label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+.rak-list label:active {
+    background: #f1f3f5;
+}
+
+
+.rak-select-actions {
+    display: flex;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+
+.rak-select-actions button {
+    flex: 1;
+    border: 1px solid #ccc;
+    background: #f7f7f7;
+    border-radius: 6px;
+    padding: 7px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+
+
+/* ================================
+   RANGE RAK
+================================ */
+
+.range-rak-row {
+    display: flex;
+    gap: 8px;
+}
+
+
+.range-rak-row > div {
+    flex: 1;
+}
+
+
+.range-rak-row label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+
+.range-rak-row select {
+    width: 100%;
+    height: 36px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background: white;
+    padding: 0 6px;
+    font-size: 14px;
+}
+
+
+
+/* ================================
+   RAK POPUP FOOTER
+================================ */
+
+.rak-popup-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+
+.rak-popup-footer button {
+    flex: 1;
+    height: 36px;
+    border: 0;
+    border-radius: 7px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+.rak-cancel {
+    background: #e5e5e5;
+    color: #333;
+}
+
+
+.rak-apply {
+    background: #1976d2;
+    color: white;
+}
+
 
 
 /* ================================
@@ -128,7 +341,10 @@ body {
     gap: 8px;
     cursor: pointer;
     user-select: none;
+    font-weight: bold;
+    font-size: 14px;
 }
+
 
 .switch {
     position: relative;
@@ -137,12 +353,14 @@ body {
     display: inline-block;
 }
 
+
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
     position: absolute;
 }
+
 
 .slider {
     position: absolute;
@@ -151,6 +369,7 @@ body {
     border-radius: 30px;
     transition: .2s;
 }
+
 
 .slider::before {
     content: '';
@@ -165,13 +384,16 @@ body {
     transition: .2s;
 }
 
+
 .switch input:checked + .slider {
     background: #2196f3;
 }
 
+
 .switch input:checked + .slider::before {
     transform: translateX(20px);
 }
+
 
 
 /* ================================
@@ -187,12 +409,26 @@ body {
     outline: none;
 }
 
+
+.rack-filter-button:focus,
+.range-rak-row select:focus,
+.search-input:focus {
+    border-color: #1976d2;
+}
+
+
+
+/* ================================
+   ITEM INFO
+================================ */
+
 .item-info {
     margin-top: 7px;
     padding-left: 2px;
     font-size: 12px;
     color: #777;
 }
+
 
 
 /* ================================
@@ -203,10 +439,12 @@ body {
     overflow: hidden;
 }
 
+
 .table-wrap {
     width: 100%;
     overflow-x: auto;
 }
+
 
 table {
     width: 100%;
@@ -214,6 +452,7 @@ table {
     min-width: 0;
     table-layout: fixed;
 }
+
 
 th,
 td {
@@ -223,6 +462,7 @@ td {
     vertical-align: middle;
 }
 
+
 th {
     background: #f7f9fb;
     font-size: 13px;
@@ -231,41 +471,59 @@ th {
     z-index: 2;
 }
 
+
 td {
     font-size: 14px;
 }
+
+
+
+/* ================================
+   KOLOM
+================================ */
 
 .col-code {
     width: 32%;
 }
 
+
 .col-product {
     width: 43%;
 }
 
-.product-name {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-     line-clamp: 2;
-    overflow: hidden;
-    word-break: break-word;
-    line-height: 1.3;
-}
 
 .col-stock {
     width: 13%;
     text-align: center;
 }
 
+
 .col-rack {
     width: 12%;
     text-align: right;
 }
 
+
 th.col-rack {
-    text-align: center !important ;
+    text-align: center !important;
 }
+
+
+
+/* ================================
+   NAMA PRODUK
+================================ */
+
+.product-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    word-break: break-word;
+    line-height: 1.3;
+}
+
 
 
 /* ================================
@@ -283,9 +541,11 @@ th.col-rack {
     text-align: left;
 }
 
+
 .code-button:active {
     opacity: .55;
 }
+
 
 
 /* ================================
@@ -295,44 +555,35 @@ th.col-rack {
 .hidden-placeholder {
     width: 100%;
     min-width: 0;
-
     border: 0;
     outline: none;
     background: transparent;
-
     padding: 0;
     margin: 0;
-
     font: inherit;
     font-size: inherit;
-
     color: #222;
-
     cursor: pointer;
 }
+
 
 .hidden-placeholder::placeholder {
     color: #777;
     opacity: 1;
 }
 
-/* Penanda data yang sudah disalin / hidden */
-.hidden-row {
-    background: #d0d5db;
-}
 
-.hidden-row td {
-    color: #777;
-}
 .hidden-placeholder::-webkit-input-placeholder {
     color: #757575;
     opacity: 1;
 }
 
+
 .hidden-placeholder::-moz-placeholder {
     color: #757575;
     opacity: 1;
 }
+
 
 .hidden-placeholder:-ms-input-placeholder {
     color: #757575;
@@ -340,20 +591,25 @@ th.col-rack {
 }
 
 
-/*
-   Supaya placeholder terlihat seperti
-   teks placeholder biasa, bukan input.
-*/
+
+/* ================================
+   DATA HIDDEN
+================================ */
+
+.hidden-row {
+    background: #d0d5db;
+}
+
+
+.hidden-row td {
+    color: #777;
+}
+
 
 .hidden-placeholder[readonly] {
     user-select: none;
 }
 
-
-/*
-   Double-click hanya berlaku pada
-   area data yang hidden.
-*/
 
 .hidden-row td:not(:last-child) {
     cursor: pointer;
@@ -373,6 +629,7 @@ th.col-rack {
 }
 
 
+
 /* ================================
    PAGINATION
 ================================ */
@@ -386,6 +643,7 @@ th.col-rack {
     border-top: 1px solid #eee;
 }
 
+
 .pagination button {
     width: 38px;
     height: 36px;
@@ -398,10 +656,12 @@ th.col-rack {
     cursor: pointer;
 }
 
+
 .pagination button:disabled {
     background: #c7c7c7;
     cursor: default;
 }
+
 
 #pageInfo {
     font-size: 13px;
@@ -409,6 +669,7 @@ th.col-rack {
     min-width: 100px;
     text-align: center;
 }
+
 
 
 /* ================================
@@ -421,22 +682,31 @@ th.col-rack {
         padding: 8px;
     }
 
+
     .top-controls {
-        gap: 10px;
+        gap: 8px;
     }
 
-    .rack-control input {
-        width: 90px;
+
+    .rak-filter-button {
+        min-width: 115px;
     }
+
 
     .toggle-control {
         gap: 5px;
         font-size: 12px;
     }
 
+
+    .rak-popup {
+        width: 280px;
+    }
+
+
     th,
     td {
-        padding: 9px 7px;
+        padding: 8px 5px;
     }
 
 }
