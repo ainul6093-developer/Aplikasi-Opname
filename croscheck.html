@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -13,9 +14,12 @@
     <link
         rel="stylesheet"
         href="css/croscheck.css">
+
 </head>
 
+
 <body>
+
 
 <header class="header">
 
@@ -37,7 +41,9 @@
 </header>
 
 
+
 <main class="container">
+
 
     <!-- =========================
          FILTER CROS CHECK
@@ -45,22 +51,213 @@
 
     <section class="control-card">
 
+
         <div class="top-controls">
 
-            <div class="rack-control">
 
-                <label for="inputRak">
+            <!-- FILTER RAK -->
+
+            <div class="rak-filter">
+
+                <span class="rak-label">
                     Rak
-                </label>
+                </span>
 
-                <input
-                    id="inputRak"
-                    type="text"
-                    placeholder="T001"
-                    autocomplete="off">
+                <button
+                    id="btnRakFilter"
+                    class="rak-filter-button"
+                    type="button">
+
+                    <span id="rakFilterText">
+                        Semua Rak
+                    </span>
+
+                    <span class="rak-arrow">
+                        ▾
+                    </span>
+
+                </button>
+
+
+                <!-- POPUP FILTER RAK -->
+
+                <div
+                    id="rakPopup"
+                    class="rak-popup">
+
+
+                    <div class="rak-popup-title">
+                        Filter Rak
+                    </div>
+
+
+                    <!-- MODE -->
+
+                    <div class="rak-mode">
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="rakMode"
+                                value="all"
+                                checked>
+
+                            <span>
+                                Semua Rak
+                            </span>
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="rakMode"
+                                value="select">
+
+                            <span>
+                                Pilih Rak
+                            </span>
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="rakMode"
+                                value="range">
+
+                            <span>
+                                Rentang Rak
+                            </span>
+
+                        </label>
+
+
+                    </div>
+
+
+
+                    <!-- PILIH RAK -->
+
+                    <div
+                        id="selectRakArea"
+                        class="rak-option-area"
+                        style="display:none;">
+
+
+                        <div class="rak-option-title">
+                            Pilih Rak
+                        </div>
+
+
+                        <div
+                            id="rakList"
+                            class="rak-list">
+                        </div>
+
+
+                        <div class="rak-select-actions">
+
+                            <button
+                                id="btnSelectAllRak"
+                                type="button">
+                                Pilih Semua
+                            </button>
+
+                            <button
+                                id="btnClearRak"
+                                type="button">
+                                Bersihkan
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- RENTANG RAK -->
+
+                    <div
+                        id="rangeRakArea"
+                        class="rak-option-area"
+                        style="display:none;">
+
+
+                        <div class="range-rak-row">
+
+
+                            <div>
+
+                                <label>
+                                    Dari
+                                </label>
+
+                                <select
+                                    id="rakRangeFrom">
+                                </select>
+
+                            </div>
+
+
+                            <div>
+
+                                <label>
+                                    Sampai
+                                </label>
+
+                                <select
+                                    id="rakRangeTo">
+                                </select>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- TOMBOL -->
+
+                    <div class="rak-popup-footer">
+
+                        <button
+                            id="btnCancelRak"
+                            class="rak-cancel"
+                            type="button">
+
+                            Batal
+
+                        </button>
+
+
+                        <button
+                            id="btnApplyRak"
+                            class="rak-apply"
+                            type="button">
+
+                            Terapkan
+
+                        </button>
+
+                    </div>
+
+
+                </div>
 
             </div>
 
+
+
+            <!-- HIDDEN COPY -->
 
             <label class="toggle-control">
 
@@ -80,8 +277,12 @@
 
             </label>
 
+
         </div>
 
+
+
+        <!-- SEARCH -->
 
         <input
             id="inputSearch"
@@ -89,12 +290,21 @@
             type="text"
             placeholder="🔎 Cari barcode / nama produk..."
             autocomplete="off">
-      
-<div id="itemInfo" class="item-info">
-    Showing 0 of 0 item
-</div>
-      
+
+
+        <!-- JUMLAH ITEM -->
+
+        <div
+            id="itemInfo"
+            class="item-info">
+
+            Showing 0 of 0 item
+
+        </div>
+
+
     </section>
+
 
 
     <!-- =========================
@@ -103,29 +313,35 @@
 
     <section class="table-card">
 
+
         <div class="table-wrap">
 
+
             <table>
+
 
                 <thead>
 
                     <tr>
 
                         <th class="col-code">
-    Barcode
-</th>
+                            Barcode
+                        </th>
 
-<th class="col-product">
-    Nama Barang
-</th>
 
-<th class="col-stock">
-    Stok
-</th>
+                        <th class="col-product">
+                            Nama Barang
+                        </th>
 
-<th class="col-rack">
-    Rak
-</th>
+
+                        <th class="col-stock">
+                            Stok
+                        </th>
+
+
+                        <th class="col-rack">
+                            Rak
+                        </th>
 
                     </tr>
 
@@ -136,9 +352,12 @@
                     id="productTableBody">
                 </tbody>
 
+
             </table>
 
+
         </div>
+
 
 
         <div
@@ -150,14 +369,18 @@
         </div>
 
 
+
         <!-- PAGINATION -->
 
         <div class="pagination">
 
+
             <button
                 id="btnPrev"
                 type="button">
+
                 ‹
+
             </button>
 
 
@@ -169,19 +392,29 @@
             <button
                 id="btnNext"
                 type="button">
+
                 ›
+
             </button>
+
 
         </div>
 
+
     </section>
+
 
 </main>
 
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js">
+</script>
+
 
 <script src="js/croscheck.js"></script>
+
 
 </body>
 
