@@ -150,36 +150,28 @@
                         class="rak-option-area"
                         style="display:none;">
 
-
                         <div class="rak-option-title">
                             Pilih Rak
                         </div>
 
+                        <input
+                            id="inputSearchRak"
+                            class="rak-search-input"
+                            type="text"
+                            placeholder="🔎 Ketik rak..."
+                            autocomplete="off">
 
                         <div
                             id="rakList"
                             class="rak-list">
                         </div>
 
-
-                        <div class="rak-select-actions">
-
-                            <button
-                                id="btnSelectAllRak"
-                                type="button">
-                                Pilih Semua
-                            </button>
-
-                            <button
-                                id="btnClearRak"
-                                type="button">
-                                Bersihkan
-                            </button>
-
+                        <div
+                            id="rakSelectedList"
+                            class="rak-selected-list">
                         </div>
 
                     </div>
-
 
 
                     <!-- RENTANG RAK -->
@@ -189,35 +181,48 @@
                         class="rak-option-area"
                         style="display:none;">
 
-
                         <div class="range-rak-row">
 
-
-                            <div>
+                            <div class="range-rak-field">
 
                                 <label>
                                     Dari
                                 </label>
 
-                                <select
-                                    id="rakRangeFrom">
-                                </select>
+                                <input
+                                    id="inputSearchRakFrom"
+                                    class="rak-search-input range-search-input"
+                                    type="text"
+                                    placeholder="🔎 Ketik rak..."
+                                    autocomplete="off">
+
+                                <div
+                                    id="rakRangeFromList"
+                                    class="rak-list range-rak-list">
+                                </div>
 
                             </div>
 
 
-                            <div>
+                            <div class="range-rak-field">
 
                                 <label>
                                     Sampai
                                 </label>
 
-                                <select
-                                    id="rakRangeTo">
-                                </select>
+                                <input
+                                    id="inputSearchRakTo"
+                                    class="rak-search-input range-search-input"
+                                    type="text"
+                                    placeholder="🔎 Ketik rak..."
+                                    autocomplete="off">
+
+                                <div
+                                    id="rakRangeToList"
+                                    class="rak-list range-rak-list">
+                                </div>
 
                             </div>
-
 
                         </div>
 
