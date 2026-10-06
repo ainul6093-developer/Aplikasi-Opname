@@ -47,6 +47,17 @@ let daftarRak =
     [];
 
 
+let rakTerpilihSementara = [];
+
+
+let rakRangeFromSementara =
+    "";
+
+
+let rakRangeToSementara =
+    "";
+
+
 
 // =========================================
 // ELEMENT
@@ -124,6 +135,54 @@ const rakList =
     );
 
 
+const rakSelectedList =
+    document.getElementById(
+        "rakSelectedList"
+    );
+
+
+const inputSearchRak =
+    document.getElementById(
+        "inputSearchRak"
+    );
+
+
+const inputSearchRakFrom =
+    document.getElementById(
+        "inputSearchRakFrom"
+    );
+
+
+const inputSearchRakTo =
+    document.getElementById(
+        "inputSearchRakTo"
+    );
+
+
+const rakRangeFromList =
+    document.getElementById(
+        "rakRangeFromList"
+    );
+
+
+const rakRangeToList =
+    document.getElementById(
+        "rakRangeToList"
+    );
+
+
+const rakRangeFromSelected =
+    document.getElementById(
+        "rakRangeFromSelected"
+    );
+
+
+const rakRangeToSelected =
+    document.getElementById(
+        "rakRangeToSelected"
+    );
+
+
 const selectRakArea =
     document.getElementById(
         "selectRakArea"
@@ -133,28 +192,6 @@ const selectRakArea =
 const rangeRakArea =
     document.getElementById(
         "rangeRakArea"
-    );
-
-
-const rakRangeFromSelect =
-    document.getElementById(
-        "rakRangeFrom"
-    );
-
-const rakRangeToSelect =
-    document.getElementById(
-        "rakRangeTo"
-    );
-
-const btnSelectAllRak =
-    document.getElementById(
-        "btnSelectAllRak"
-    );
-
-
-const btnClearRak =
-    document.getElementById(
-        "btnClearRak"
     );
 
 
@@ -330,218 +367,295 @@ function buatDaftarRak() {
 
 
 // =========================================
-// RENDER DAFTAR RAK
+// RENDER HASIL PENCARIAN RAK
 // =========================================
 
-function renderDaftarRak() {
+function buatHasilRak(container, hasil) {
 
-    rakList.replaceChildren();
+    container.replaceChildren();
 
+    if (hasil.length === 0) {
 
-    if (
-        daftarRak.length === 0
-    ) {
+        const kosong = document.createElement("div");
 
-        const kosong =
-            document.createElement(
-                "div"
-            );
+        kosong.className = "rak-empty";
 
+        kosong.textContent = "Rak tidak ditemukan.";
 
-        kosong.textContent =
-            "Belum ada data rak.";
-
-
-        kosong.style.padding =
-            "8px";
-
-
-        kosong.style.color =
-            "#777";
-
-
-        rakList.appendChild(
-            kosong
-        );
-
+        container.appendChild(kosong);
 
         return;
 
     }
 
+    hasil.forEach(function(rak) {
+
+        const tombol = document.createElement("button");
+
+        tombol.type = "button";
+
+        tombol.className = "rak-result";
+
+        tombol.textContent = rak;
+
+        tombol.dataset.rak = rak;
+
+        container.appendChild(tombol);
+
+    });
+
+}
 
 
-    daftarRak.forEach(
-        function(rak) {
+// =========================================
+// PILIH HASIL RAK
+// =========================================
 
-            const label =
-                document.createElement(
-                    "label"
-                );
+rakList.addEventListener(
+    "click",
+    function(event) {
 
+        const tombol =
+            event.target.closest(".rak-result");
 
-            const checkbox =
-                document.createElement(
-                    "input"
-                );
+        if (!tombol) return;
 
+        event.preventDefault();
+        event.stopPropagation();
 
-            checkbox.type =
-                "checkbox";
+        const rak = tombol.dataset.rak;
 
+        if (!rak) return;
 
-            checkbox.value =
-                rak;
+        if (!rakTerpilihSementara.includes(rak)) {
 
-
-            checkbox.className =
-                "rak-checkbox";
-
-
-            if (
-                rakTerpilih.includes(
-                    rak
-                )
-            ) {
-
-                checkbox.checked =
-                    true;
-
-            }
-
-
-            const text =
-                document.createElement(
-                    "span"
-                );
-
-
-            text.textContent =
-                rak;
-
-
-            label.append(
-                checkbox,
-                text
-            );
-
-
-            rakList.appendChild(
-                label
-            );
+            rakTerpilihSementara.push(rak);
 
         }
+
+        inputSearchRak.value = "";
+
+        renderHasilPilihRak();
+        renderRakTerpilih();
+
+        inputSearchRak.focus();
+
+    }
+);
+
+
+rakRangeFromList.addEventListener(
+    "click",
+    function(event) {
+
+        const tombol =
+            event.target.closest(".rak-result");
+
+        if (!tombol) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const rak = tombol.dataset.rak;
+
+        if (!rak) return;
+
+        rakRangeFromSementara = rak;
+        inputSearchRakFrom.value = rak;
+        rakRangeFromList.replaceChildren();
+
+        inputSearchRakFrom.blur();
+
+    }
+);
+
+
+rakRangeToList.addEventListener(
+    "click",
+    function(event) {
+
+        const tombol =
+            event.target.closest(".rak-result");
+
+        if (!tombol) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const rak = tombol.dataset.rak;
+
+        if (!rak) return;
+
+        rakRangeToSementara = rak;
+        inputSearchRakTo.value = rak;
+        rakRangeToList.replaceChildren();
+
+        inputSearchRakTo.blur();
+
+    }
+);
+
+
+function hasilCariRak(searchValue) {
+
+    const search = normalisasi(searchValue);
+
+    if (!search) return [];
+
+    return daftarRak.filter(function(rak) {
+
+        return normalisasi(rak).includes(search);
+
+    });
+
+}
+
+
+function renderDaftarRak() {
+
+    renderHasilPilihRak();
+
+    renderRakTerpilih();
+
+}
+
+
+function renderHasilPilihRak() {
+
+    if (!normalisasi(inputSearchRak.value)) {
+
+        rakList.replaceChildren();
+
+        return;
+
+    }
+
+    const hasil =
+        hasilCariRak(
+            inputSearchRak.value
+        ).filter(function(rak) {
+
+            return !rakTerpilihSementara.includes(rak);
+
+        });
+
+    buatHasilRak(
+        rakList,
+        hasil.slice(0, 30)
     );
 
 }
 
 
+function renderRakTerpilih() {
 
-// =========================================
-// RENDER PILIHAN RENTANG
-// =========================================
+    rakSelectedList.replaceChildren();
+
+    rakTerpilihSementara.forEach(function(rak) {
+
+        const chip = document.createElement("span");
+
+        chip.className = "rak-selected";
+
+        chip.appendChild(document.createTextNode(rak));
+
+        const tombolHapus = document.createElement("button");
+
+        tombolHapus.type = "button";
+
+        tombolHapus.textContent = "×";
+
+        tombolHapus.setAttribute("aria-label", `Hapus rak ${rak}`);
+
+        tombolHapus.addEventListener("click", function(event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            rakTerpilihSementara =
+                rakTerpilihSementara.filter(function(item) {
+                    return item !== rak;
+                });
+
+            renderHasilPilihRak();
+            renderRakTerpilih();
+
+        });
+
+        chip.appendChild(tombolHapus);
+
+        rakSelectedList.appendChild(chip);
+
+    });
+
+}
+
 
 function renderPilihanRentang() {
 
-    rakRangeFromSelect.replaceChildren();
-    rakRangeToSelect.replaceChildren();
+    renderHasilRentang("from");
+    renderHasilRentang("to");
 
-    daftarRak.forEach(
-        function(rak) {
-
-            const optionFrom =
-                document.createElement(
-                    "option"
-                );
-
-            optionFrom.value =
-                rak;
-
-            optionFrom.textContent =
-                rak;
-
-            rakRangeFromSelect.appendChild(
-                optionFrom
-            );
+}
 
 
-            const optionTo =
-                document.createElement(
-                    "option"
-                );
+function renderHasilRentang(sisi) {
 
-            optionTo.value =
-                rak;
+    const input =
+        sisi === "from"
+            ? inputSearchRakFrom
+            : inputSearchRakTo;
 
-            optionTo.textContent =
-                rak;
+    const container =
+        sisi === "from"
+            ? rakRangeFromList
+            : rakRangeToList;
 
-            rakRangeToSelect.appendChild(
-                optionTo
-            );
+    const nilaiTerpilih =
+        sisi === "from"
+            ? rakRangeFromSementara
+            : rakRangeToSementara;
 
-        }
+    if (!normalisasi(input.value)) {
+
+        container.replaceChildren();
+
+        return;
+
+    }
+
+    const hasil =
+        hasilCariRak(input.value).filter(function(rak) {
+
+            return rak !== nilaiTerpilih;
+
+        });
+
+    buatHasilRak(
+        container,
+        hasil.slice(0, 20)
     );
 
-
-    if (
-        rakRangeFromSelect.options.length
-    ) {
-
-        rakRangeFromSelect.value =
-            rakRangeFromSelect.options[0].value;
-
-        rakRangeToSelect.value =
-            rakRangeToSelect.options[
-                rakRangeToSelect.options.length - 1
-            ].value;
-
-    }
+}
 
 
-    if (
-        rakRangeFromSelect.options.length
-    ) {
+function siapkanRakSementara() {
 
-        if (
-            rakTerpilih.length
-        ) {
+    rakTerpilihSementara = [...rakTerpilih];
 
-            const pertama =
-                rakTerpilih[0];
+    rakRangeFromSementara = rakRangeFrom;
 
-            const terakhir =
-                rakTerpilih[
-                    rakTerpilih.length - 1
-                ];
+    rakRangeToSementara = rakRangeTo;
 
+    inputSearchRak.value = "";
 
-            if (
-                daftarRak.includes(
-                    pertama
-                )
-            ) {
+    inputSearchRakFrom.value = rakRangeFromSementara;
 
-                rakRangeFromSelect.value =
-                    pertama;
+    inputSearchRakTo.value = rakRangeToSementara;
 
-            }
+    renderDaftarRak();
 
-
-            if (
-                daftarRak.includes(
-                    terakhir
-                )
-            ) {
-
-                rakRangeToSelect.value =
-                    terakhir;
-
-            }
-
-        }
-
-    }
+    renderPilihanRentang();
 
 }
 
@@ -1135,38 +1249,29 @@ function updateRakModeUI() {
 
 
 // =========================================
-// AMBIL RAK YANG DICENTANG
+// SEARCH PILIHAN RAK
 // =========================================
 
-function bacaRakTerpilih() {
+inputSearchRak.addEventListener(
+    "input",
+    function() {
+        renderHasilPilihRak();
+    }
+);
 
-    const checkbox =
-        rakList.querySelectorAll(
-            ".rak-checkbox"
-        );
+inputSearchRakFrom.addEventListener(
+    "input",
+    function() {
+        renderHasilRentang("from");
+    }
+);
 
-
-    rakTerpilih =
-        Array.from(
-            checkbox
-        )
-        .filter(
-            function(item) {
-
-                return item.checked;
-
-            }
-        )
-        .map(
-            function(item) {
-
-                return item.value;
-
-            }
-        );
-
-}
-
+inputSearchRakTo.addEventListener(
+    "input",
+    function() {
+        renderHasilRentang("to");
+    }
+);
 
 
 // =========================================
@@ -1711,13 +1816,21 @@ btnRakFilter.addEventListener(
 
         event.stopPropagation();
 
+        const akanDibuka =
+            !rakPopup.classList.contains(
+                "show"
+            );
+
+        if (akanDibuka) {
+            siapkanRakSementara();
+        }
+
         rakPopup.classList.toggle(
             "show"
         );
 
     }
 );
-
 
 
 // Klik luar popup = tutup
@@ -1768,64 +1881,14 @@ document
 
 
 // =========================================
-// PILIH SEMUA RAK
-// =========================================
-
-btnSelectAllRak.addEventListener(
-    "click",
-    function() {
-
-        rakList
-            .querySelectorAll(
-                ".rak-checkbox"
-            )
-            .forEach(
-                function(checkbox) {
-
-                    checkbox.checked =
-                        true;
-
-                }
-            );
-
-    }
-);
-
-
-
-// =========================================
-// BERSIHKAN PILIHAN RAK
-// =========================================
-
-btnClearRak.addEventListener(
-    "click",
-    function() {
-
-        rakList
-            .querySelectorAll(
-                ".rak-checkbox"
-            )
-            .forEach(
-                function(checkbox) {
-
-                    checkbox.checked =
-                        false;
-
-                }
-            );
-
-    }
-);
-
-
-
-// =========================================
 // BATAL
 // =========================================
 
 btnCancelRak.addEventListener(
     "click",
     function() {
+
+        siapkanRakSementara();
 
         rakPopup.classList.remove(
             "show"
@@ -1837,7 +1900,6 @@ btnCancelRak.addEventListener(
 );
 
 
-
 // =========================================
 // TERAPKAN FILTER RAK
 // =========================================
@@ -1846,49 +1908,25 @@ btnApplyRak.addEventListener(
     "click",
     function() {
 
-
         const radio =
             document.querySelector(
                 'input[name="rakMode"]:checked'
             );
 
-
         if (!radio) return;
-
 
         const mode =
             radio.value;
 
-
-      // =========================
-        // SEMUA RAK
-        // =========================
-
-        if (
-            mode === "all"
-        ) {
+        if (mode === "all") {
 
             modeRak =
                 "all";
 
         }
+        else if (mode === "select") {
 
-
-
-        // =========================
-        // PILIH RAK
-        // =========================
-
-        else if (
-            mode === "select"
-        ) {
-
-            bacaRakTerpilih();
-
-
-            if (
-                rakTerpilih.length === 0
-            ) {
+            if (rakTerpilihSementara.length === 0) {
 
                 alert(
                     "Silakan pilih minimal satu rak."
@@ -1898,66 +1936,51 @@ btnApplyRak.addEventListener(
 
             }
 
+            rakTerpilih =
+                [...rakTerpilihSementara];
 
             modeRak =
                 "select";
 
         }
+        else if (mode === "range") {
 
+            if (!rakRangeFromSementara || !rakRangeToSementara) {
 
+                alert(
+                    "Silakan pilih rak awal dan rak akhir."
+                );
 
-        // =========================
-        // RENTANG RAK
-        // =========================
+                return;
 
-        else if (
-            mode === "range"
-        ) {
+            }
 
-     if (
-    !rakRangeFromSelect.value ||
-    !rakRangeToSelect.value
-) {
+            rakRangeFrom =
+                rakRangeFromSementara;
 
-    alert(
-        "Silakan pilih rak awal dan rak akhir."
-    );
-
-    return;
-
-}
-
-
-rakRangeFrom =
-    rakRangeFromSelect.value;
-
-rakRangeTo =
-    rakRangeToSelect.value;
+            rakRangeTo =
+                rakRangeToSementara;
 
             modeRak =
                 "range";
 
         }
 
-
-
         halamanSekarang =
             1;
 
-
         updateRakFilterText();
 
+        siapkanRakSementara();
 
         rakPopup.classList.remove(
             "show"
         );
 
-
         jadwalkanRender(true);
 
     }
 );
-
 
 
 // =========================================
@@ -2123,6 +2146,8 @@ window.addEventListener(
 // =========================================
 
 bacaDataExcel();
+
+siapkanRakSementara();
 
 updateRakModeUI();
 
