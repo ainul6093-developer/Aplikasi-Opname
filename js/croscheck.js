@@ -1999,6 +1999,16 @@ inputSearch.addEventListener(
 
         jadwalkanRender(true);
 
+      clearTimeout(inputSearch.selectTimer);
+
+        inputSearch.selectTimer = setTimeout(
+            function() {
+
+                inputSearch.select();
+
+            },
+            2000
+        );
     }
 );
 
