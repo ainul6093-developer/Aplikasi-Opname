@@ -209,12 +209,23 @@ body {
 }
 
 
-.rak-option-title {
-    font-size: 13px;
-    font-weight: bold;
+.rak-option-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 7px;
 }
 
+.rak-option-title {
+    flex: 0 0 auto;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.rak-option-header .rak-search-input {
+    flex: 1;
+    min-width: 0;
+}
 
 .rak-search-input {
     width: 100%;
