@@ -464,7 +464,7 @@ rakRangeFromList.addEventListener(
         inputSearchRakFrom.value = rak;
         rakRangeFromList.replaceChildren();
 
-        inputSearchRakFrom.blur();
+        inputSearchRakFrom.focus();
 
     }
 );
@@ -490,7 +490,7 @@ rakRangeToList.addEventListener(
         inputSearchRakTo.value = rak;
         rakRangeToList.replaceChildren();
 
-        inputSearchRakTo.blur();
+        inputSearchRakTo.focus();
 
     }
 );
