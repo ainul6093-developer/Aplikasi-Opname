@@ -778,3 +778,24 @@ th.col-rack {
     }
 
 }
+
+
+.sort-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+}
+
+.sort-button span {
+    font-size: 16px;
+    line-height: 1;
+}
