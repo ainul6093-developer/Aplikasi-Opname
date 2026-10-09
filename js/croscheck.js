@@ -25,6 +25,8 @@ let filteredProduk = [];
 let halamanSekarang = 1;
 
 let renderTimer = null;
+let kolomSortir = "";
+let arahSortir = 1;
 
 
 
@@ -943,6 +945,30 @@ function cocokRak(item) {
 }
 
 
+document.querySelectorAll(".sort-button").forEach(function(tombol) {
+    tombol.addEventListener("click", function() {
+        const kolom = tombol.dataset.sort;
+
+        if (kolomSortir === kolom) {
+            arahSortir *= -1;
+        } else {
+            kolomSortir = kolom;
+            arahSortir = 1;
+        }
+
+        document.querySelectorAll(".sort-button").forEach(function(btn) {
+            btn.querySelector("span").textContent =
+                btn.dataset.sort === kolomSortir
+                    ? (arahSortir === 1 ? "↑" : "↓")
+                    : "↕";
+        });
+
+        halamanSekarang = 1;
+        filterData();
+        renderTabel();
+    });
+});
+
 
 // =========================================
 // FILTER DATA
@@ -1010,6 +1036,31 @@ function filterData() {
 
             }
         );
+  
+
+    if (kolomSortir) {
+        filteredProduk.sort(function(a, b) {
+            let hasil;
+
+            if (kolomSortir === "STOK") {
+                hasil = Number(a.STOK || 0) - Number(b.STOK || 0);
+            } else if (kolomSortir === "RAK") {
+                hasil = String(a.RAK ?? "").localeCompare(
+                    String(b.RAK ?? ""),
+                    undefined,
+                    { numeric: true, sensitivity: "base" }
+                );
+            } else {
+                hasil = String(a.NAMA ?? "").localeCompare(
+                    String(b.NAMA ?? ""),
+                    undefined,
+                    { numeric: true, sensitivity: "base" }
+                );
+            }
+
+            return hasil * arahSortir;
+        });
+    }
 
 
 
