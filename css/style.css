@@ -328,6 +328,79 @@ input {
     padding: 0 15px 15px;
 }
 
+/* Status file dan tombol upload dalam satu baris ringkas */
+.upload-file-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+    padding-top: 10px;
+}
+
+.upload-file-status {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #28a745;
+    overflow-wrap: anywhere;
+}
+
+/* Tombol upload kustom tanpa teks bawaan browser */
+#excelFile {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.custom-upload-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    border: 1px solid #1976d2;
+    border-radius: 10px;
+    background: #1976d2;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(25, 118, 210, 0.18);
+    transition: background .18s ease, transform .18s ease;
+}
+
+.custom-upload-button:active {
+    background: #125ca5;
+    transform: scale(.98);
+}
+
+.custom-upload-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(255,255,255,.9);
+    border-radius: 6px;
+    font-size: 15px;
+    line-height: 1;
+}
+
+#excelFile:focus-visible + .custom-upload-button {
+    outline: 3px solid rgba(25, 118, 210, .25);
+    outline-offset: 3px;
+}
 
 #uploadExcelArea.hidden {
     display: none;

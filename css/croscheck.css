@@ -464,19 +464,85 @@ body {
    SEARCH
 ================================ */
 
-.search-input {
+.search-wrap {
+    position: relative;
     width: 100%;
-    padding: 11px 12px;
+}
+
+.search-input {
+    display: block;
+    width: 100%;
+    padding: 11px 44px 11px 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 16px;
     outline: none;
+    background: #fff;
 }
-
 
 .rack-filter-button:focus,
 .search-input:focus {
     border-color: #1976d2;
+}
+
+/* Blok teks tetap tampak walau pengguna mengetuk area lain di layar. */
+.search-wrap.selection-locked .search-input:not(:focus) {
+    color: transparent;
+    caret-color: transparent;
+}
+
+.search-selection-visual {
+    display: none;
+    position: absolute;
+    left: 13px;
+    right: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: max-content;
+    max-width: calc(100% - 58px);
+    overflow: hidden;
+    white-space: pre;
+    text-overflow: clip;
+    background: #1d63b8;
+    color: #fff;
+    padding: 0 1px;
+    line-height: 1.4;
+    font-size: 16px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.search-wrap.selection-locked .search-input:not(:focus) + .search-selection-visual {
+    display: inline-block;
+}
+
+.search-clear-button {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background: #e8edf2;
+    color: #4b5563;
+    font-size: 23px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.search-clear-button:active {
+    background: #d4dce5;
+}
+
+.search-clear-button[hidden] {
+    display: none !important;
 }
 
 
