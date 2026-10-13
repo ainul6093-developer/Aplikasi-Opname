@@ -291,12 +291,27 @@
 
         <!-- SEARCH -->
 
-        <input
-            id="inputSearch"
-            class="search-input"
-            type="text"
-            placeholder="🔎 Cari barcode / nama produk..."
-            autocomplete="off">
+        <div id="searchWrap" class="search-wrap">
+            <input
+                id="inputSearch"
+                class="search-input"
+                type="text"
+                placeholder="🔎 Cari barcode / nama produk..."
+                autocomplete="off">
+
+            <span
+                id="searchSelectionVisual"
+                class="search-selection-visual"
+                aria-hidden="true"></span>
+
+            <button
+                id="clearSearchButton"
+                class="search-clear-button"
+                type="button"
+                aria-label="Hapus pencarian"
+                title="Hapus pencarian"
+                hidden>×</button>
+        </div>
 
 
         <!-- JUMLAH ITEM -->
