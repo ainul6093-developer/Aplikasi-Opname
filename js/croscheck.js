@@ -12,6 +12,31 @@ const HIDDEN_KEY =
     "croscheckHiddenProduk";
 
 
+const VIEW_STATE_KEY =
+    "croscheckViewState";
+
+
+// Simpan kondisi menu hanya selama sesi tab.
+// Refresh manual menghapus kondisi tampilan, tetapi data hidden tetap tersimpan.
+let tampilanCroscheckTersimpan = null;
+
+try {
+    const navEntry = performance.getEntriesByType("navigation")[0];
+    const jenisNavigasi = navEntry?.type ||
+        (performance.navigation?.type === 1 ? "reload" : "navigate");
+
+    if (jenisNavigasi === "reload") {
+        sessionStorage.removeItem(VIEW_STATE_KEY);
+    } else {
+        tampilanCroscheckTersimpan = JSON.parse(
+            sessionStorage.getItem(VIEW_STATE_KEY) || "null"
+        );
+    }
+} catch (e) {
+    tampilanCroscheckTersimpan = null;
+}
+
+
 const PAGE_SIZE = 100;
 
 
@@ -69,6 +94,15 @@ const inputSearch =
     document.getElementById(
         "inputSearch"
     );
+
+const searchWrap =
+    document.getElementById("searchWrap");
+
+const clearSearchButton =
+    document.getElementById("clearSearchButton");
+
+const searchSelectionVisual =
+    document.getElementById("searchSelectionVisual");
 
 
 const toggleHiddenCopy =
@@ -1326,36 +1360,212 @@ inputSearchRakTo.addEventListener(
 
 
 // =========================================
-// DOUBLE CLICK UNTUK SHOW / HIDDEN
+// LONG PRESS DATA HIDDEN UNTUK SHOW SEMUA PADA HALAMAN AKTIF
 // =========================================
 
-function pasangDoubleClick(
-    td,
-    item
-) {
+function dataHiddenPadaHalamanAktif() {
+    const start = (halamanSekarang - 1) * PAGE_SIZE;
+    const akhir = Math.min(start + PAGE_SIZE, filteredProduk.length);
 
-    td.addEventListener(
-        "dblclick",
-        function(event) {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-
-            setHidden(
-                item,
-                !isHidden(item)
-            );
-
-
-            renderTabel();
-
-        }
-    );
-
+    return filteredProduk
+        .slice(start, akhir)
+        .filter(function(item) {
+            return isHidden(item);
+        });
 }
 
+function tampilkanKonfirmasiShowSemua() {
+    const targetHidden = dataHiddenPadaHalamanAktif();
+    if (targetHidden.length === 0) return;
+
+    // Hindari membuka konfirmasi dobel bila event long-press terpanggil berdekatan.
+    if (document.getElementById("showHiddenConfirmOverlay")) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "showHiddenConfirmOverlay";
+    overlay.style.cssText = [
+        "position:fixed", "inset:0", "z-index:100000",
+        "display:flex", "align-items:center", "justify-content:center",
+        "padding:20px", "background:rgba(15,23,42,.42)",
+        "backdrop-filter:blur(2px)"
+    ].join(";");
+
+    const modal = document.createElement("div");
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "showHiddenConfirmTitle");
+    modal.style.cssText = [
+        "width:100%", "max-width:360px", "box-sizing:border-box",
+        "padding:24px", "border-radius:18px", "background:#fff",
+        "box-shadow:0 18px 55px rgba(15,23,42,.24)",
+        "font-family:Arial,sans-serif", "text-align:center",
+        "transform:translateY(8px)", "opacity:0",
+        "transition:opacity .18s ease, transform .18s ease"
+    ].join(";");
+
+    const icon = document.createElement("div");
+    icon.textContent = "↗";
+    icon.style.cssText = [
+        "display:flex", "align-items:center", "justify-content:center",
+        "width:48px", "height:48px", "margin:0 auto 14px",
+        "border-radius:50%", "background:#e8f2ff", "color:#1976d2",
+        "font-size:28px", "font-weight:700"
+    ].join(";");
+
+    const title = document.createElement("div");
+    title.id = "showHiddenConfirmTitle";
+    title.textContent = "Tampilkan semua data?";
+    title.style.cssText = "font-size:18px;font-weight:700;color:#172033;margin-bottom:8px";
+
+    const message = document.createElement("div");
+    message.textContent = targetHidden.length.toLocaleString("id-ID") +
+        " data tersembunyi pada halaman ini akan ditampilkan kembali.";
+    message.style.cssText = "font-size:14px;line-height:1.55;color:#647084;margin-bottom:22px";
+
+    const actions = document.createElement("div");
+    actions.style.cssText = "display:flex;gap:10px";
+
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.textContent = "Batal";
+    cancel.style.cssText = [
+        "flex:1", "min-height:43px", "border:1px solid #d9e0e8",
+        "border-radius:10px", "background:#f8fafc", "color:#334155",
+        "font-size:14px", "font-weight:700", "cursor:pointer"
+    ].join(";");
+
+    const confirm = document.createElement("button");
+    confirm.type = "button";
+    confirm.textContent = "Tampilkan";
+    confirm.style.cssText = [
+        "flex:1", "min-height:43px", "border:0", "border-radius:10px",
+        "background:#1976d2", "color:#fff", "font-size:14px",
+        "font-weight:700", "cursor:pointer", "box-shadow:0 3px 8px rgba(25,118,210,.2)"
+    ].join(";");
+
+    actions.append(cancel, confirm);
+    modal.append(icon, title, message, actions);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    requestAnimationFrame(function() {
+        modal.style.opacity = "1";
+        modal.style.transform = "translateY(0)";
+    });
+
+    function tutup() {
+        modal.style.opacity = "0";
+        modal.style.transform = "translateY(8px)";
+        setTimeout(function() { overlay.remove(); }, 180);
+    }
+
+    cancel.addEventListener("click", tutup);
+    overlay.addEventListener("click", function(event) {
+        if (event.target === overlay) tutup();
+    });
+    confirm.addEventListener("click", function() {
+        // Hapus hanya status hidden untuk item yang berada di halaman/filter aktif.
+        targetHidden.forEach(function(item) {
+            const kode = kodeProduk(item);
+            if (kode) delete hiddenProduk[kode];
+        });
+        simpanHidden();
+        tutup();
+        renderTabel();
+        simpanTampilanCroscheck();
+    });
+
+    cancel.focus({ preventScroll: true });
+}
+
+function pasangLongPressTampilkanSemua(area) {
+    let timerLongPress = null;
+    let posisiAwalX = 0;
+    let posisiAwalY = 0;
+    let blokKlikSampai = 0;
+
+    function batalkanTimer() {
+        clearTimeout(timerLongPress);
+        timerLongPress = null;
+    }
+
+    area.addEventListener("pointerdown", function(event) {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        posisiAwalX = event.clientX;
+        posisiAwalY = event.clientY;
+        batalkanTimer();
+
+        timerLongPress = setTimeout(function() {
+            timerLongPress = null;
+            blokKlikSampai = Date.now() + 1000;
+            // Mencegah event klik setelah menahan data mengubah status satu item.
+            setTimeout(function() { blokKlikSampai = 0; }, 1100);
+            tampilkanKonfirmasiShowSemua();
+        }, 650);
+    });
+
+    area.addEventListener("pointermove", function(event) {
+        if (Math.abs(event.clientX - posisiAwalX) > 12 ||
+            Math.abs(event.clientY - posisiAwalY) > 12) {
+            batalkanTimer();
+        }
+    });
+    area.addEventListener("pointerup", batalkanTimer);
+    area.addEventListener("pointercancel", batalkanTimer);
+    area.addEventListener("pointerleave", batalkanTimer);
+
+    // Bila browser tetap mengirim click setelah long-press, abaikan click tersebut.
+    area.addEventListener("click", function(event) {
+        if (Date.now() <= blokKlikSampai) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            blokKlikSampai = 0;
+        }
+    }, true);
+
+    area.addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+    });
+}
+
+
+// =========================================
+// DOUBLE CLICK / DOUBLE TAP UNTUK SHOW / HIDDEN
+// =========================================
+
+function pasangDoubleClick(td, item) {
+    let waktuKlikTerakhir = 0;
+    let timerKlik = null;
+
+    td.addEventListener("click", function(event) {
+        const sekarang = Date.now();
+        const selang = sekarang - waktuKlikTerakhir;
+
+        if (selang > 0 && selang <= 550) {
+            clearTimeout(timerKlik);
+            waktuKlikTerakhir = 0;
+            event.preventDefault();
+            event.stopPropagation();
+
+            setHidden(item, !isHidden(item));
+            renderTabel();
+            simpanTampilanCroscheck();
+            return;
+        }
+
+        waktuKlikTerakhir = sekarang;
+        clearTimeout(timerKlik);
+        timerKlik = setTimeout(function() {
+            waktuKlikTerakhir = 0;
+        }, 600);
+    });
+
+    // Cegah seleksi teks bawaan browser; aksi dua kali ditangani oleh click di atas.
+    td.addEventListener("dblclick", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+    });
+}
 
 
 // =========================================
@@ -1393,36 +1603,6 @@ function buatPlaceholderHidden(
 
     input.className =
         "hidden-placeholder";
-
-
-    input.addEventListener(
-        "dblclick",
-        function(event) {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-
-            if (
-                !isHidden(item)
-            ) {
-
-                return;
-
-            }
-
-
-            setHidden(
-                item,
-                false
-            );
-
-
-            renderTabel();
-
-        }
-    );
 
 
     return input;
@@ -1567,6 +1747,17 @@ function buatBaris(item) {
 
 
 
+    // Pada sel barcode, aktifkan dua kali klik hanya saat datanya hidden.
+    // Saat barcode normal, satu klik tetap khusus untuk menyalin barcode.
+    if (hidden) {
+        pasangDoubleClick(
+            tdKode,
+            item
+        );
+        pasangLongPressTampilkanSemua(tdKode);
+    }
+
+
     // =========================
     // NAMA PRODUK
     // =========================
@@ -1619,6 +1810,9 @@ if (hidden) {
         tdNama,
         item
     );
+    if (hidden) {
+        pasangLongPressTampilkanSemua(tdNama);
+    }
 
 
 
@@ -1669,6 +1863,9 @@ if (hidden) {
         tdStok,
         item
     );
+    if (hidden) {
+        pasangLongPressTampilkanSemua(tdStok);
+    }
 
 
 
@@ -1709,6 +1906,9 @@ if (hidden) {
         tdRak,
         item
     );
+    if (hidden) {
+        pasangLongPressTampilkanSemua(tdRak);
+    }
 
 
 
@@ -2035,34 +2235,70 @@ btnApplyRak.addEventListener(
 
 
 // =========================================
-// INPUT SEARCH
+// INPUT SEARCH + BLOK OTOMATIS + TOMBOL HAPUS
 // =========================================
 
-inputSearch.addEventListener(
-    "input",
-    function() {
-
-        /*
-            Search selalu mencari
-            dari seluruh hasil filter Rak,
-            bukan hanya halaman aktif.
-        */
-
-        jadwalkanRender(true);
-
-      clearTimeout(inputSearch.selectTimer);
-
-        inputSearch.selectTimer = setTimeout(
-            function() {
-
-                inputSearch.select();
-
-            },
-            2000
-        );
+function perbaruiTampilanSearch() {
+    if (searchSelectionVisual) {
+        searchSelectionVisual.textContent = inputSearch.value;
     }
-);
 
+    if (clearSearchButton) {
+        clearSearchButton.hidden = inputSearch.value.length === 0;
+    }
+}
+
+inputSearch.addEventListener("input", function() {
+    // Saat pengguna mengetik lagi, buka blok visual lama terlebih dahulu.
+    if (searchWrap) {
+        searchWrap.classList.remove("selection-locked");
+    }
+
+    perbaruiTampilanSearch();
+    jadwalkanRender(true);
+
+    clearTimeout(inputSearch.selectTimer);
+    inputSearch.selectTimer = setTimeout(function() {
+        // Hanya membuat blok otomatis ketika kolom search masih aktif.
+        if (document.activeElement !== inputSearch || !inputSearch.value) {
+            return;
+        }
+
+        inputSearch.select();
+        if (searchWrap) {
+            searchWrap.classList.add("selection-locked");
+        }
+        perbaruiTampilanSearch();
+    }, 2000);
+});
+
+function lepasBlokSearch() {
+    // Klik khusus pada kolom search adalah satu-satunya tindakan yang melepas blok.
+    if (searchWrap) {
+        searchWrap.classList.remove("selection-locked");
+    }
+    perbaruiTampilanSearch();
+}
+
+inputSearch.addEventListener("focus", lepasBlokSearch);
+inputSearch.addEventListener("click", lepasBlokSearch);
+
+if (clearSearchButton) {
+    clearSearchButton.addEventListener("click", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        clearTimeout(inputSearch.selectTimer);
+        inputSearch.value = "";
+        if (searchWrap) {
+            searchWrap.classList.remove("selection-locked");
+        }
+        perbaruiTampilanSearch();
+        jadwalkanRender(true);
+        inputSearch.focus();
+        simpanTampilanCroscheck();
+    });
+}
 
 
 // =========================================
@@ -2154,6 +2390,85 @@ btnNext.addEventListener(
 
 
 // =========================================
+// SIMPAN / PULIHKAN KONDISI TAMPILAN CROS CHECK
+// =========================================
+
+function simpanTampilanCroscheck() {
+    try {
+        sessionStorage.setItem(VIEW_STATE_KEY, JSON.stringify({
+            search: inputSearch.value,
+            searchSelectionLocked: Boolean(searchWrap?.classList.contains("selection-locked")),
+            hiddenCopy: Boolean(toggleHiddenCopy.checked),
+            modeRak: modeRak,
+            rakTerpilih: rakTerpilih,
+            rakRangeFrom: rakRangeFrom,
+            rakRangeTo: rakRangeTo,
+            halaman: halamanSekarang,
+            kolomSortir: kolomSortir,
+            arahSortir: arahSortir
+        }));
+    } catch (e) {
+        // Jika sessionStorage penuh/tidak tersedia, fungsi utama tetap berjalan.
+    }
+}
+
+function pulihkanTampilanCroscheck() {
+    const state = tampilanCroscheckTersimpan;
+    if (!state || typeof state !== "object") return;
+
+    inputSearch.value = String(state.search ?? "");
+    toggleHiddenCopy.checked = state.hiddenCopy === true;
+
+    modeRak = ["all", "select", "range"].includes(state.modeRak)
+        ? state.modeRak
+        : "all";
+
+    rakTerpilih = Array.isArray(state.rakTerpilih)
+        ? state.rakTerpilih.map(String)
+        : [];
+
+    rakRangeFrom = String(state.rakRangeFrom ?? "");
+    rakRangeTo = String(state.rakRangeTo ?? "");
+
+    halamanSekarang = Math.max(1, Number(state.halaman) || 1);
+    kolomSortir = ["NAMA", "STOK", "RAK"].includes(state.kolomSortir)
+        ? state.kolomSortir
+        : "";
+    arahSortir = Number(state.arahSortir) === -1 ? -1 : 1;
+
+    const radioRak = document.querySelector(
+        `input[name="rakMode"][value="${modeRak}"]`
+    );
+    if (radioRak) radioRak.checked = true;
+
+    document.querySelectorAll(".sort-button").forEach(function(btn) {
+        const icon = btn.querySelector("span");
+        if (!icon) return;
+        icon.textContent = btn.dataset.sort === kolomSortir
+            ? (arahSortir === 1 ? "↑" : "↓")
+            : "↕";
+    });
+
+    perbaruiTampilanSearch();
+    if (state.searchSelectionLocked && inputSearch.value && searchWrap) {
+        searchWrap.classList.add("selection-locked");
+    }
+}
+
+// Simpan setelah aksi selesai, bukan di tengah-tengah event handler.
+let timerSimpanTampilan = null;
+function jadwalkanSimpanTampilan() {
+    clearTimeout(timerSimpanTampilan);
+    timerSimpanTampilan = setTimeout(simpanTampilanCroscheck, 80);
+}
+
+document.addEventListener("click", jadwalkanSimpanTampilan, true);
+document.addEventListener("input", jadwalkanSimpanTampilan, true);
+document.addEventListener("change", jadwalkanSimpanTampilan, true);
+window.addEventListener("pagehide", simpanTampilanCroscheck);
+
+
+// =========================================
 // KEMBALI KE OPNAME
 // =========================================
 
@@ -2208,6 +2523,8 @@ window.addEventListener(
 
 bacaDataExcel();
 
+pulihkanTampilanCroscheck();
+
 siapkanRakSementara();
 
 updateRakModeUI();
@@ -2217,3 +2534,5 @@ updateRakFilterText();
 filterData();
 
 renderTabel();
+
+perbaruiTampilanSearch();

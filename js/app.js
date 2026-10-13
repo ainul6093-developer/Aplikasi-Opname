@@ -1279,15 +1279,44 @@ const uploadStatus =
     document.getElementById("uploadStatus");
 
 
-toggleUploadExcel.addEventListener(
-    "click",
-    function () {
+// Pulihkan posisi dropdown saat kembali dari menu Croscheck.
+// Refresh manual tetap mengembalikan tampilan awal (terbuka).
+const KUNCI_UPLOAD_DROPDOWN = "opnameUploadDropdownTertutup";
 
-        const tertutup =
-            uploadExcelArea.classList.toggle("hidden");
+function aturDropdownUpload(tertutup) {
+    uploadExcelArea.classList.toggle("hidden", tertutup);
+    uploadArrow.textContent = tertutup ? "▼" : "▲";
+}
 
-        uploadArrow.textContent =
-            tertutup ? "▼" : "▲";
+function jenisNavigasiSaatIni() {
+    const entri = performance.getEntriesByType("navigation")[0];
+    return entri ? entri.type : "navigate";
+}
 
+if (jenisNavigasiSaatIni() === "reload") {
+    // Refresh sengaja mengatur ulang posisi dropdown.
+    sessionStorage.removeItem(KUNCI_UPLOAD_DROPDOWN);
+    aturDropdownUpload(false);
+} else {
+    const posisiTersimpan = sessionStorage.getItem(KUNCI_UPLOAD_DROPDOWN);
+    if (posisiTersimpan !== null) {
+        aturDropdownUpload(posisiTersimpan === "true");
+    } else {
+        aturDropdownUpload(uploadExcelArea.classList.contains("hidden"));
     }
-);
+}
+
+// Simpan posisi terakhir ketika pengguna membuka/menutup dropdown.
+toggleUploadExcel.addEventListener("click", function () {
+    const tertutup = uploadExcelArea.classList.toggle("hidden");
+    uploadArrow.textContent = tertutup ? "▼" : "▲";
+    sessionStorage.setItem(KUNCI_UPLOAD_DROPDOWN, String(tertutup));
+});
+
+// Pastikan posisi terakhir tersimpan saat berpindah ke menu lain.
+window.addEventListener("pagehide", function () {
+    sessionStorage.setItem(
+        KUNCI_UPLOAD_DROPDOWN,
+        String(uploadExcelArea.classList.contains("hidden"))
+    );
+});
