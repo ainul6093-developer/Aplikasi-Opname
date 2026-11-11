@@ -529,3 +529,143 @@ input {
         margin-top: -3px;
     }
 }
+
+/* Ikon senter kamera: petir tersilang saat mati, petir utuh saat aktif. */
+.scan-torch-button {
+    position: absolute;
+    top: max(12px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    z-index: 999;
+    display: flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.48);
+    color: #f4f4f5;
+    font-size: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.scan-torch-button::before {
+    width: 28px;
+    height: 28px;
+    content: "";
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M7 2v11h3v9l7-12h-4l4-8z'/%3E%3Cpath d='M3 3l18 18' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='square'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M7 2v11h3v9l7-12h-4l4-8z'/%3E%3Cpath d='M3 3l18 18' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='square'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.scan-torch-button.is-active::before {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M7 2v11h3v9l7-12h-4l4-8z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M7 2v11h3v9l7-12h-4l4-8z'/%3E%3C/svg%3E");
+}
+
+/* ================================
+   MODAL KAMERA SCAN BARCODE
+================================ */
+
+.scanner-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    padding: max(8vh, env(safe-area-inset-top, 20px)) 12px 20vh;
+    background: rgba(15, 23, 42, 0.78);
+    overscroll-behavior: contain;
+}
+
+.scanner-overlay[hidden] {
+    display: none !important;
+}
+
+.scanner-camera-card {
+    position: relative;
+    display: flex;
+    flex: 0 1 640px;
+    width: 100%;
+    height: 68vh;
+    height: 68dvh;
+    min-width: 0;
+    min-height: min(300px, 60dvh);
+    max-height: 720px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background: #000;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+}
+
+#reader {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0 !important;
+    background: #000;
+    color: #fff;
+}
+
+#reader > div {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+}
+
+#reader__scan_region {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    align-items: stretch;
+    justify-content: center;
+    background: #000;
+}
+
+#reader video {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: none;
+    min-height: 0;
+    object-fit: cover;
+}
+
+/* Kamera tetap bersih tanpa bingkai putih atau overlay panduan bawaan. */
+#reader #qr-shaded-region {
+    display: none !important;
+}
+
+#reader__scan_region img {
+    object-fit: contain;
+}
+
+#reader__dashboard {
+    display: none !important;
+}
+
+
+@media (max-height: 520px) {
+    .scanner-overlay {
+        padding-bottom: 52px;
+    }
+
+    .scanner-camera-card {
+        height: 68vh;
+        height: 68dvh;
+        max-height: calc(100vh - 72px);
+        max-height: calc(100dvh - 72px);
+        min-height: min(220px, 56dvh);
+    }
+}
