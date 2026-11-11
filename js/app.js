@@ -605,170 +605,220 @@ function bunyiBeep() {
         console.log("Beep tidak tersedia:", e);
     }
 }
-btnScan.addEventListener("click", function () {
+const scannerArea = document.getElementById("scannerArea");
+const btnTorch = document.getElementById("btnTorch");
 
-    if (dataProduk.length == 0) {
+let scannerStartPromise = null;
+let barcodeSedangDiproses = false;
+let scannerSedangMenutup = false;
 
-        alert("Import file Excel terlebih dahulu ‼️");
+function resetStatusSenter() {
+    torchNyala = false;
+    btnTorch.classList.remove("is-active");
+    btnTorch.setAttribute("aria-label", "Aktifkan senter");
+}
 
+async function tutupScanner() {
+    if (scannerSedangMenutup) return;
+
+    scannerSedangMenutup = true;
+    const scanner = html5QrCode;
+
+    scannerAktif = false;
+    scannerArea.hidden = true;
+    scannerArea.setAttribute("aria-hidden", "true");
+    resetStatusSenter();
+
+    if (!scanner) {
+        scannerSedangMenutup = false;
         return;
-
     }
 
-    if (scannerAktif) return;
+    try {
+        // Tunggu proses membuka kamera selesai agar stream tidak tertinggal aktif.
+        if (scannerStartPromise) {
+            try {
+                await scannerStartPromise;
+            } catch (error) {
+                // Kegagalan start ditangani oleh fungsi mulaiScanner.
+            }
+        }
+
+        try {
+            if (scanner.isScanning) {
+                await scanner.stop();
+            }
+        } catch (error) {
+            console.warn("Kamera tidak dapat dihentikan dengan normal:", error);
+        }
+
+        try {
+            await scanner.clear();
+        } catch (error) {
+            // Reader bisa saja belum selesai dibuat ketika kamera ditutup.
+        }
+
+        if (html5QrCode === scanner) {
+            html5QrCode = null;
+            scannerStartPromise = null;
+        }
+    } finally {
+        scannerSedangMenutup = false;
+    }
+}
+
+async function prosesBarcodeHasilScan(barcode) {
+    if (!scannerAktif || barcodeSedangDiproses) return;
+
+    barcodeSedangDiproses = true;
+    await tutupScanner();
+    bunyiBeep();
+
+    const hasil = dataProduk.find(function(item) {
+        return String(item.KODE).trim() === String(barcode).trim();
+    });
+
+    if (!hasil) {
+        document.getElementById("kodeProduk").innerHTML = "-";
+        document.getElementById("namaProduk").innerHTML = "Belum ada produk";
+        document.getElementById("rakProduk").innerHTML = "-";
+        document.getElementById("stokProduk").innerHTML = "-";
+
+        document.getElementById("stokKulkas").value = "";
+        document.getElementById("stokFisik").value = "";
+        document.getElementById("totalFisik").innerText = "0";
+
+        barcodeSekarang = "";
+        stokSistemSekarang = 0;
+        namaSekarang = "";
+        rakSekarang = "";
+
+        document.getElementById("stokKulkas").disabled = true;
+
+        alert("❌ Produk tidak ditemukan");
+        return;
+    }
+
+    const dataLama = dataTersimpan[String(hasil.KODE).trim()];
+
+    if (dataLama) {
+        kulkasAktif = dataLama.kulkasAktif || false;
+
+        document.getElementById("stokKulkas").value =
+            dataLama.kulkas ?? "";
+
+        document.getElementById("stokFisik").value =
+            dataLama.fisik ?? "";
+    } else {
+        kulkasAktif = false;
+
+        document.getElementById("stokKulkas").value = "";
+        document.getElementById("stokFisik").value = "";
+    }
+
+    aturTampilanKulkas();
+    hitungTotalFisik();
+
+    barcodeSekarang = hasil.KODE;
+    stokSistemSekarang = Number(hasil.STOK);
+    namaSekarang = hasil.NAMA;
+    rakSekarang = hasil.RAK;
+
+    simpanKondisiAplikasi();
+
+    document.getElementById("kodeProduk").innerHTML = hasil.KODE;
+    document.getElementById("namaProduk").innerHTML = hasil.NAMA;
+    document.getElementById("rakProduk").innerHTML = hasil.RAK;
+    document.getElementById("stokProduk").innerHTML = hasil.STOK;
+
+    // AUTO SALIN SETELAH SCAN
+    if (autoSalinAktif) {
+        setTimeout(function() {
+            document.getElementById("copyKode").click();
+        }, 200);
+    }
+}
+
+async function mulaiScanner() {
+    if (dataProduk.length === 0) {
+        alert("Import file Excel terlebih dahulu ‼️");
+        return;
+    }
+
+    if (scannerAktif || scannerSedangMenutup) return;
 
     scannerAktif = true;
+    barcodeSedangDiproses = false;
+    resetStatusSenter();
 
-    document.getElementById("scannerArea").style.display = "block";
-    document.getElementById("btnTorch").style.display = "block";
+    scannerArea.hidden = false;
+    scannerArea.setAttribute("aria-hidden", "false");
 
     html5QrCode = new Html5Qrcode("reader");
+    const scanner = html5QrCode;
 
-    html5QrCode.start(
-
+    scannerStartPromise = scanner.start(
         {
             facingMode: "environment"
         },
-
         {
             fps: 10,
             qrbox: 250
         },
-
-        function (barcode) {
-
-            html5QrCode.stop();
-            bunyiBeep();
-            document.getElementById("scannerArea").style.display = "none";
-            document.getElementById("btnTorch").style.display = "none";
-
-            scannerAktif = false;
-
-            const hasil = dataProduk.find(function(item){
-
-    return String(item.KODE).trim() === String(barcode).trim();
-
-});
-
-if(!hasil){
-
-    document.getElementById("kodeProduk").innerHTML = "-";
-    document.getElementById("namaProduk").innerHTML = "Belum ada produk";
-    document.getElementById("rakProduk").innerHTML = "-";
-    document.getElementById("stokProduk").innerHTML = "-";
-
-    document.getElementById("stokKulkas").value = "";
-    document.getElementById("stokFisik").value = "";
-    document.getElementById("totalFisik").innerText = "0";
-
-    barcodeSekarang = "";
-    stokSistemSekarang = 0;
-    namaSekarang = "";
-    rakSekarang = "";
-
-    document.getElementById("stokKulkas").disabled = true;
-
-    alert("❌ Produk tidak ditemukan");
-
-    return;
-}
-
-const dataLama = dataTersimpan[String(hasil.KODE).trim()];
-
-if (dataLama) {
-
-    kulkasAktif = dataLama.kulkasAktif || false;
-
-    document.getElementById("stokKulkas").value =
-        dataLama.kulkas ?? "";
-
-    document.getElementById("stokFisik").value =
-        dataLama.fisik ?? "";
-
-} else {
-
-  
-    kulkasAktif = false;
-
-    document.getElementById("stokKulkas").value = "";
-
-    document.getElementById("stokFisik").value = "";
-  
-}
-
-aturTampilanKulkas();
-          
-
-hitungTotalFisik();
-
-barcodeSekarang = hasil.KODE;
-
-stokSistemSekarang = Number(hasil.STOK);
-
-namaSekarang = hasil.NAMA;
-
-rakSekarang = hasil.RAK;
-
-simpanKondisiAplikasi();
-
-document.getElementById("kodeProduk").innerHTML =
-    hasil.KODE;
-
-document.getElementById("namaProduk").innerHTML =
-    hasil.NAMA;
-
-document.getElementById("rakProduk").innerHTML =
-    hasil.RAK;
-
-document.getElementById("stokProduk").innerHTML =
-    hasil.STOK;
-
-          // AUTO SALIN SETELAH SCAN
-    
-if (autoSalinAktif) {
-
-    setTimeout(function () {
-
-        document.getElementById("copyKode").click();
-
-    }, 200);
-
-}
-    
-        },
-
-        function () {
-
-        }
-
+        prosesBarcodeHasilScan,
+        function() {}
     );
 
-});
-document.getElementById("btnTorch").addEventListener("click", async function () {
+    try {
+        await scannerStartPromise;
+    } catch (error) {
+        const overlayMasihTerbuka = !scannerArea.hidden;
+        await tutupScanner();
 
-    if (!html5QrCode) return;
+        if (overlayMasihTerbuka) {
+            console.error("Gagal membuka kamera:", error);
+            alert("Kamera tidak dapat dibuka. Periksa izin kamera pada browser.");
+        }
+    }
+}
+
+btnScan.addEventListener("click", mulaiScanner);
+
+// Ketukan pada area gelap di luar panel akan langsung menutup kamera.
+scannerArea.addEventListener("click", function(event) {
+    if (event.target === scannerArea) {
+        tutupScanner();
+    }
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape" && !scannerArea.hidden) {
+        tutupScanner();
+    }
+});
+
+btnTorch.addEventListener("click", async function() {
+    if (!html5QrCode || !scannerAktif) return;
 
     try {
-
-        torchNyala = !torchNyala;
+        const statusBaru = !torchNyala;
 
         await html5QrCode.applyVideoConstraints({
-            torch: torchNyala,
+            torch: statusBaru,
             advanced: [{
-                torch: torchNyala
+                torch: statusBaru
             }]
         });
 
-        this.innerHTML = torchNyala
-         ? "⚡̸"
-         : "⚡";
-
-    } catch (e) {
-
+        torchNyala = statusBaru;
+        this.classList.toggle("is-active", torchNyala);
+        this.setAttribute(
+            "aria-label",
+            torchNyala ? "Matikan senter" : "Aktifkan senter"
+        );
+    } catch (error) {
         alert("HP atau browser tidak mendukung senter.");
-
     }
-
 });
 document.getElementById("btnSimpan").addEventListener(
     "click",
