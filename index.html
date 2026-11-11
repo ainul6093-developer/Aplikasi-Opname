@@ -133,43 +133,31 @@
     </button>
 
     <div
-    id="scannerArea"
-    style="
-    position:relative;
-    width:100%;
-    margin-top:15px;
-    display:none;">
+        id="scannerArea"
+        class="scanner-overlay"
+        aria-hidden="true"
+        hidden>
 
-    <div
-        id="reader"
-        style="
-        width:100%;">
+        <section
+            id="scannerPanel"
+            class="scanner-camera-card"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Pemindai barcode">
+
+            <div id="reader" class="scanner-reader"></div>
+
+            <button
+                id="btnTorch"
+                class="scan-torch-button"
+                type="button"
+                title="Senter"
+                aria-label="Aktifkan senter">
+            </button>
+
+        </section>
+
     </div>
-
-<button
-    id="btnTorch"
-    title="Senter"
-    style="
-    display:block;
-    position:absolute;
-    top:10px;
-    right:10px;
-    z-index:999;
-    width:50px;
-    height:50px;
-    padding:0;
-    border:none;
-    border-radius:50%;
-    background:rgba(0,0,0,0.55);
-    color:white;
-    font-size:27px;
-    font-weight:bold;">
-
-    ⚡
-
-</button>
-
-</div>
 
 </div>
 
